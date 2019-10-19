@@ -80,9 +80,9 @@ class State:
     def _push_foundation(self, card, dest):
         """ returns `new foundation` """
         new_fnds = list(self.foundations)
-        new_fnd = list(new_fnds[src])
+        new_fnd = list(new_fnds[dest])
         new_fnd.append(card)
-        new_fnds[src] = tuple(new_fnd)
+        new_fnds[dest] = tuple(new_fnd)
         return tuple(new_fnds)
 
     def move_tableau_to_tableau(self, src, dest):
@@ -153,6 +153,14 @@ class TestState(unittest.TestCase):
         self.assertNotEqual(s, self.state)
         self.assertEqual(s.tableau[0], ())
         self.assertEqual(s.tableau[1], ("3C", "7D", "4D"))
+
+    def test_tableau_to_foundation(self):
+        self.assertEqual(len(self.state.tableau[0]), 1)
+        self.assertEqual(len(self.state.foundations[0]), 0)
+        s = self.state.move_tableau_to_foundation(0, 0)
+        self.assertNotEqual(s, self.state)
+        self.assertEqual(s.tableau[0], ())
+        self.assertEqual(s.foundations[0], ("4D",))
 
 
 if __name__ == "__main__":
