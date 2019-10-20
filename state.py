@@ -100,9 +100,9 @@ class State:
 
     def move_foundation_to_tableau(self, srcf, destt):
         card, fnd = self._pop_foundation(srcf)
-        s = self._update_tableau(tab)
+        s = self._update_foundation(fnd)
         tab = s._push_tableau(card, destt)
-        s = s._update_foundation(fnd)
+        s = s._update_tableau(tab)
         return s
 
 
@@ -141,7 +141,7 @@ class TestState(unittest.TestCase):
     def setUp(self):
         self.state = State(
             stock=("10H", "8D", "7H"),
-            foundations=((), (), (), ()),
+            foundations=((), (), (), ("AH",)),
             waste=(),
             tableau=(("4D",), ("3C", "7D")),
         )
@@ -161,6 +161,14 @@ class TestState(unittest.TestCase):
         self.assertNotEqual(s, self.state)
         self.assertEqual(s.tableau[0], ())
         self.assertEqual(s.foundations[0], ("4D",))
+
+    def test_foundation_to_tableau(self):
+        self.assertEqual(len(self.state.tableau[0]), 1)
+        self.assertEqual(self.state.foundations[3], ("AH",))
+        s = self.state.move_foundation_to_tableau(3, 0)
+        self.assertNotEqual(s, self.state)
+        self.assertEqual(s.tableau[0], ("4D", "AH"))
+        self.assertEqual(s.foundations[3], ())
 
 
 if __name__ == "__main__":
