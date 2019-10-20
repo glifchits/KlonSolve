@@ -21,10 +21,17 @@ class State:
 
     @staticmethod
     def init_from_game(game_dict):
-        stock = tuple(game_dict["stock"])
-        tableau = tuple(
-            tuple(card.upper() for card in t) for t in game_dict["tableau piles"]
-        )
+        def card(c):
+            """ fixes up card definitions for Solvitaire format compat """
+            if c.startswith("10"):
+                if c[-1] in "cdsh":
+                    return c.replace("10", "t")
+                else:
+                    return c.replace("10", "T")
+            return c
+
+        stock = tuple(map(card, game_dict["stock"]))
+        tableau = tuple(tuple(map(card, t)) for t in game_dict["tableau piles"])
         waste = tuple(game_dict["waste"])
         foundations = tuple(game_dict.get("foundations", [tuple()] * 4))
         return State(stock, tableau, waste, foundations)
@@ -116,31 +123,29 @@ class TestState(unittest.TestCase):
             game = json.load(f)
         state = State.init_from_game(game)
         initial_stock = (
-            "10H,8D,7H,KC,3D,10D,5H,8C,QS,JS,9H,7C,"
-            "6D,8S,QD,QH,AC,9C,5S,KH,QC,2S,10C,9D"
+            "TH,8D,7H,KC,3D,TD,5H,8C,QS,JS,9H,7C,6D,8S,QD,QH,AC,9C,5S,KH,QC,2S,TC,9D"
         )
         self.assertEqual(state.stock, tuple(initial_stock.split(",")))
 
         piles = [
-            ["4D"],
-            ["3c", "4C"],
-            ["9s", "7d", "6H"],
-            ["ah", "7s", "2c", "JD"],
-            ["ad", "6s", "2h", "10s", "AS"],
-            ["4h", "8h", "2d", "ks", "jc", "5C"],
-            ["3h", "4s", "3s", "5d", "jh", "6c", "KD"],
+            ("4D",),
+            ("3c", "4C"),
+            ("9s", "7d", "6H"),
+            ("ah", "7s", "2c", "JD"),
+            ("ad", "6s", "2h", "ts", "AS"),
+            ("4h", "8h", "2d", "ks", "jc", "5C"),
+            ("3h", "4s", "3s", "5d", "jh", "6c", "KD"),
         ]
         self.assertEqual(len(state.tableau), len(piles))
         for actual_pile, expected_pile in zip(state.tableau, piles):
-            expected_pile_upper = tuple(c.upper() for c in expected_pile)
-            self.assertEqual(tuple(actual_pile), expected_pile_upper)
+            self.assertEqual(actual_pile, expected_pile)
 
         self.assertEqual(state.waste, ())
         self.assertEqual(state.foundations, ((), (), (), ()))
 
     def setUp(self):
         self.state = State(
-            stock=("10H", "8D", "7H"),
+            stock=("TH", "8D", "7H"),
             foundations=((), (), (), ("AH",)),
             waste=(),
             tableau=(("4D",), ("3C", "7D")),
@@ -176,4 +181,4 @@ if __name__ == "__main__":
 
 
 # from state import State
-# state = State(stock=("10H", "8D", "7H"),foundations=((), (), (), ()),waste=(),tableau=(("4D",), ("3C", "7D")))
+# state = State(stock=("TH", "8D", "7H"),foundations=((), (), (), ()),waste=(),tableau=(("4D",), ("3C", "7D")))
