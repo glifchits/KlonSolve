@@ -88,13 +88,10 @@ class TestState(unittest.TestCase):
         for actual_pile, expected_pile in zip(actual, expected):
             self.assertEqual(actual_pile, expected_pile)
 
-        foundation = (
-            state.foundation1,
-            state.foundation2,
-            state.foundation3,
-            state.foundation4,
-        )
-        self.assertEqual(foundation, ((), (), (), ()))
+        self.assertEqual(state.foundation1, ())
+        self.assertEqual(state.foundation2, ())
+        self.assertEqual(state.foundation3, ())
+        self.assertEqual(state.foundation4, ())
 
 
 if __name__ == "__main__":
