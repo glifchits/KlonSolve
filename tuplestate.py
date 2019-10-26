@@ -245,6 +245,23 @@ class TestState(unittest.TestCase):
         self.assertEqual(state2[WASTE][-1], "8S")
         self.assertEqual(state2[TABLEAU3], ("5s", "jd", "JS", "TH"))
 
+    def test_bunch_of_moves_and_move_two_cards(self):
+        state = draw(self.state)
+        state = draw(state)
+        state = draw(state)
+        state = move(state, WASTE, TABLEAU3)
+        self.assertEqual(state[WASTE][-1], "8S")
+        self.assertEqual(state[TABLEAU3], ("5s", "jd", "JS", "TH"))
+        state2 = move(state, TABLEAU4, TABLEAU3)
+        self.assertEqual(state2[TABLEAU3], ("5s", "jd", "JS", "TH", "9S"))
+        self.assertEqual(state2[TABLEAU4], ("2h", "kd", "7C"))
+        state3 = move(state2, TABLEAU4, TABLEAU1)
+        self.assertEqual(state3[TABLEAU4], ("2h", "KD"))
+        self.assertEqual(state3[TABLEAU1], ("8H", "7C"))
+        state4 = move(state3, TABLEAU1, TABLEAU3, cards=2)
+        self.assertEqual(state4[TABLEAU1], ())
+        self.assertEqual(state4[TABLEAU3], ("5s", "jd", "JS", "TH", "9S", "8H", "7C"))
+
 
 if __name__ == "__main__":
     unittest.main()
