@@ -236,6 +236,15 @@ class TestState(unittest.TestCase):
         s3 = "3H,TD,2D,AS,4H,6H,AH,8S,TH,QD,KH,QS,AD,KS,7D,4C,TC,7H,7S,3C,8C"
         self.assertEqual(",".join(state3[STOCK]), s3)
 
+    def test_move_waste_to_tableau(self):
+        state = draw(self.state)
+        state = draw(state)
+        state = draw(state)
+        self.assertEqual(state[WASTE][-1], "TH")
+        state2 = move(state, WASTE, TABLEAU3)
+        self.assertEqual(state2[WASTE][-1], "8S")
+        self.assertEqual(state2[TABLEAU3], ("5s", "jd", "JS", "TH"))
+
 
 if __name__ == "__main__":
     unittest.main()
