@@ -94,8 +94,8 @@ def draw(state):
 
 
 def replace_stock(state):
-    new_waste = state[STOCK]  # directly swap the stock and waste
-    new_stock = state[WASTE]
+    new_waste = ()
+    new_stock = tuple(reversed(state[WASTE]))  # reverse the waste pile
     new_state = list(state)
     new_state[STOCK] = new_stock
     new_state[WASTE] = new_waste
@@ -305,13 +305,13 @@ class TestState(unittest.TestCase):
         self.assertEqual(state[STOCK], ())
 
         state2 = replace_stock(state)
-        s2 = "3H,TD,2D,AS,4H,6H,AH,8S,TH,QD,KH,QS,AD,KS,7D,4C,TC,7H,7S,3C,8C,QC,9C,KC"
+        s2 = "KC,9C,QC,8C,3C,7S,7H,TC,4C,7D,KS,AD,QS,KH,QD,TH,8S,AH,6H,4H,AS,2D,TD,3H"
         self.assertEqual(",".join(state2[STOCK]), s2)
         self.assertEqual(state2[WASTE], ())
 
         state3 = draw(state2)
-        self.assertEqual(state3[WASTE], ("KC", "9C", "QC"))
-        s3 = "3H,TD,2D,AS,4H,6H,AH,8S,TH,QD,KH,QS,AD,KS,7D,4C,TC,7H,7S,3C,8C"
+        self.assertEqual(state3[WASTE], ("3H", "TD", "2D"))
+        s3 = "KC,9C,QC,8C,3C,7S,7H,TC,4C,7D,KS,AD,QS,KH,QD,TH,8S,AH,6H,4H,AS"
         self.assertEqual(",".join(state3[STOCK]), s3)
 
     def test_move_waste_to_tableau(self):
@@ -353,12 +353,12 @@ class TestState(unittest.TestCase):
         state = replace_stock(state)
         while len(state[STOCK]) >= 3:
             state = draw(state)
-        self.assertEqual(state[STOCK], ("3H", "TD"))
+        self.assertEqual(state[STOCK], ("KC", "9C"))
         # draw with only two cards left in the stock
         state2 = draw(state)
         # after draw, two cards should be empty
         self.assertEqual(state2[STOCK], ())
-        self.assertEqual(state2[WASTE][-2:], ("TD", "3H"))
+        self.assertEqual(state2[WASTE][-2:], ("9C", "KC"))
 
     def test_entire_game(self):
         verbose = False
