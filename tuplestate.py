@@ -82,7 +82,8 @@ def move(state, src_pile, dest_pile, cards=1):
 def draw(state):
     new_waste = state[WASTE]
     new_stock = state[STOCK]
-    for _ in range(3):
+    draw_count = min(3, len(state[STOCK]))
+    for _ in range(draw_count):
         new_waste = new_waste + (new_stock[-1],)
         new_stock = new_stock[:-1]
     new_state = list(state)
@@ -261,6 +262,26 @@ class TestState(unittest.TestCase):
         state4 = move(state3, TABLEAU1, TABLEAU3, cards=2)
         self.assertEqual(state4[TABLEAU1], ())
         self.assertEqual(state4[TABLEAU3], ("5s", "jd", "JS", "TH", "9S", "8H", "7C"))
+
+    def test_draw_with_two_in_stock(self):
+        state = draw(self.state)
+        state = draw(state)
+        state = draw(state)
+        # make a legal move which moves card from waste to tableau
+        state = move(state, WASTE, TABLEAU3)
+        # deplete the stock
+        while len(state[STOCK]) > 0:
+            state = draw(state)
+        # replace stock: length of stock mod 3 = 2
+        state = replace_stock(state)
+        while len(state[STOCK]) >= 3:
+            state = draw(state)
+        self.assertEqual(state[STOCK], ("3H", "TD"))
+        # draw with only two cards left in the stock
+        state2 = draw(state)
+        # after draw, two cards should be empty
+        self.assertEqual(state2[STOCK], ())
+        self.assertEqual(state2[WASTE][-2:], ("TD", "3H"))
 
 
 if __name__ == "__main__":
