@@ -396,8 +396,8 @@ class TestState(unittest.TestCase):
                 self.assertEqual(actual_card, expected_card)
 
         tableau = [TABLEAU1, TABLEAU2, TABLEAU3, TABLEAU4, TABLEAU5, TABLEAU6, TABLEAU7]
-        for talon in tableau:
-            self.assertEqual(state[talon], ())
+        for tab in tableau:
+            self.assertEqual(state[tab], ())
 
         self.assertEqual(state.stock, ())
         self.assertEqual(state.waste, ())
