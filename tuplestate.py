@@ -6,7 +6,6 @@ KlonState = namedtuple(
     "KlonState",
     [
         "stock",
-        "waste",
         "tableau1",
         "tableau2",
         "tableau3",
@@ -14,6 +13,7 @@ KlonState = namedtuple(
         "tableau5",
         "tableau6",
         "tableau7",
+        "waste",
         "foundation1",
         "foundation2",
         "foundation3",
@@ -22,18 +22,38 @@ KlonState = namedtuple(
 )
 
 STOCK = 0
-WASTE = 1
-TABLEAU1 = 2
-TABLEAU2 = 3
-TABLEAU3 = 4
-TABLEAU4 = 5
-TABLEAU5 = 6
-TABLEAU6 = 7
-TABLEAU7 = 8
+TABLEAU1 = 1
+TABLEAU2 = 2
+TABLEAU3 = 3
+TABLEAU4 = 4
+TABLEAU5 = 5
+TABLEAU6 = 6
+TABLEAU7 = 7
+WASTE = 8
 FOUNDATION_C = 9
 FOUNDATION_D = 10
 FOUNDATION_S = 11
 FOUNDATION_H = 12
+
+VALUE = 0  # the 0th index of a card string
+SUIT = 1  # the 1st index of a card string
+FNDS = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
+VALUE_ORDER = set(
+    [
+        ("A", "2"),
+        ("2", "3"),
+        ("3", "4"),
+        ("4", "5"),
+        ("5", "6"),
+        ("6", "7"),
+        ("7", "8"),
+        ("8", "9"),
+        ("9", "T"),
+        ("T", "J"),
+        ("J", "Q"),
+        ("Q", "K"),
+    ]
+)
 
 
 def init_from_solvitaire(game_dict):
@@ -100,6 +120,66 @@ def replace_stock(state):
     new_state[STOCK] = new_stock
     new_state[WASTE] = new_waste
     return KlonState(*new_state)
+
+
+def count_face_up(pile):
+    """ number of faceup cards in a given TABLEAU pile """
+    if len(pile) == 0:
+        return 0
+    if len(pile) == 1:
+        return 1
+    for i, card in enumerate(reversed(pile)):
+        if card[1] in "cdsh":  # the i'th card is face-down
+            # therefore the (i-1)th card is face-up
+            # we want a count so we want (i-1)+1 = i
+            return i
+
+
+def can_stack_tableau(src, dest):
+    RED = "DH"
+    BLACK = "CS"
+    if src[SUIT] in RED and dest[SUIT] in RED:
+        return False
+    if src[SUIT] in BLACK and dest[SUIT] in BLACK:
+        return False
+    return (src[VALUE], dest[VALUE]) in VALUE_ORDER
+
+
+def get_legal_moves(state):
+    """ returns a set of legal moves given the state """
+    moves = set()
+    TABLEAUS = range(TABLEAU1, TABLEAU7 + 1)
+    FACEUP = {}
+    for tab in TABLEAUS:
+        pile = state[tab]
+        fu = count_face_up(pile)
+        FACEUP[tab] = pile[-fu:]
+    # tab to tab
+    for src in TABLEAUS:
+        for dest in TABLEAUS:
+            if src == dest:
+                continue
+            for i, src_faceup in enumerate(FACEUP[src]):
+                if can_stack_tableau(src_faceup, state[dest][-1]):
+                    move = f"{src}{dest}"
+                    if i > 0:
+                        move += f"-{i+1}"
+                    moves.add(move)
+    # tab to foundation
+    for src in TABLEAUS:
+        src_top = state[src][-1]
+        for fnd, fnd_suit in zip(FNDS, "CDSH"):
+            move = f"{src}{fnd_suit}"
+            if len(state[fnd]) == 0:
+                if src_top[VALUE] == "A" and src_top[SUIT] == fnd_suit:
+                    moves.add(move)
+            else:
+                fnd_top = fnd_pile[-1]
+                if src_top[SUIT] == fnd_top[SUIT]:
+                    ord = (src_top[VALUE], dest_top[VALUE])
+                    if ord in VALUE_ORDER:
+                        moves.add(move)
+    return moves
 
 
 def to_dict(state):
@@ -401,6 +481,12 @@ class TestState(unittest.TestCase):
 
         self.assertEqual(state.stock, ())
         self.assertEqual(state.waste, ())
+
+    def test_get_legal_moves(self):
+        # pprint(to_dict(self.state))
+        actual = get_legal_moves(self.state)
+        expected = set(["5C", "14"])  # move AC to foundation, move 8H onto 9S
+        self.assertEqual(expected, actual)
 
 
 if __name__ == "__main__":
