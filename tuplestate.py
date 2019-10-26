@@ -79,6 +79,18 @@ def move(state, src_pile, dest_pile, cards=1):
     return KlonState(*new_state)
 
 
+def draw(state):
+    new_waste = state[WASTE]
+    new_stock = state[STOCK]
+    for _ in range(3):
+        new_waste = new_waste + (new_stock[-1],)
+        new_stock = new_stock[:-1]
+    new_state = list(state)
+    new_state[STOCK] = new_stock
+    new_state[WASTE] = new_waste
+    return KlonState(*new_state)
+
+
 import unittest
 import json
 
@@ -167,6 +179,17 @@ class TestState(unittest.TestCase):
         self.assertEqual(self.state[TABLEAU4], ("2h", "kd", "7c", "9S"))
         self.assertEqual(state2[TABLEAU1], ())
         self.assertEqual(state2[TABLEAU4], ("2h", "kd", "7c", "9S", "8H"))
+
+    def test_draw_cards(self):
+        self.assertEqual(self.state[WASTE], ())
+        st1 = "KC,9C,QC,8C,3C,7S,7H,TC,4C,7D,KS,AD,QS,KH,QD,TH,8S,AH,6H,4H,AS,2D,TD,3H"
+        self.assertEqual(",".join(self.state[STOCK]), st1)
+
+        state2 = draw(self.state)
+
+        self.assertEqual(state2[WASTE], ("3H", "TD", "2D"))
+        st2 = "KC,9C,QC,8C,3C,7S,7H,TC,4C,7D,KS,AD,QS,KH,QD,TH,8S,AH,6H,4H,AS"
+        self.assertEqual(",".join(state2[STOCK]), st2)
 
 
 if __name__ == "__main__":
