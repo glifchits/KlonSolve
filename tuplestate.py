@@ -65,6 +65,8 @@ def init_from_solvitaire(game_dict):
 
 
 def last_face_up(pile):
+    if len(pile) == 0:
+        return pile
     return pile[:-1] + (pile[-1].upper(),)
 
 
@@ -82,26 +84,6 @@ import json
 
 
 class TestState(unittest.TestCase):
-    def setUp(self):
-        initial_stock = (
-            "KC,9C,QC,8C,3C,7S,7H,TC,4C,7D,KS,AD,QS,KH,QD,TH,8S,AH,6H,4H,AS,2D,TD,3H"
-        )
-        self.state = KlonState(
-            stock=tuple(initial_stock.split(",")),
-            waste=(),
-            tableau1=("8H",),
-            tableau2=("3d", "6C"),
-            tableau3=("5s", "jd", "JS"),
-            tableau4=("2h", "kd", "7c", "9S"),
-            tableau5=("qh", "8d", "jc", "2c", "AC"),
-            tableau6=("4s", "6s", "2s", "3s", "9d", "5C"),
-            tableau7=("5h", "6d", "5d", "4d", "ts", "9h", "JH"),
-            foundation1=(),
-            foundation2=(),
-            foundation3=(),
-            foundation4=(),
-        )
-
     def test_init_from_solvitaire(self):
         with open("./fixtures/sm-seed12.json") as f:
             game1 = json.load(f)
@@ -146,12 +128,45 @@ class TestState(unittest.TestCase):
         self.assertEqual(state.foundation3, ())
         self.assertEqual(state.foundation4, ())
 
+    def setUp(self):
+        initial_stock = (
+            "KC,9C,QC,8C,3C,7S,7H,TC,4C,7D,KS,AD,QS,KH,QD,TH,8S,AH,6H,4H,AS,2D,TD,3H"
+        )
+        self.state = KlonState(
+            stock=tuple(initial_stock.split(",")),
+            waste=(),
+            tableau1=("8H",),
+            tableau2=("3d", "6C"),
+            tableau3=("5s", "jd", "JS"),
+            tableau4=("2h", "kd", "7c", "9S"),
+            tableau5=("qh", "8d", "jc", "2c", "AC"),
+            tableau6=("4s", "6s", "2s", "3s", "9d", "5C"),
+            tableau7=("5h", "6d", "5d", "4d", "ts", "9h", "JH"),
+            foundation1=(),
+            foundation2=(),
+            foundation3=(),
+            foundation4=(),
+        )
+
     def test_move_tableau_to_foundation(self):
         self.assertEqual(self.state[TABLEAU5], ("qh", "8d", "jc", "2c", "AC"))
         self.assertEqual(self.state[FOUNDATION_C], ())
         state2 = move(self.state, TABLEAU5, FOUNDATION_C)
+        # nothing changed in self.state
+        self.assertEqual(self.state[TABLEAU5], ("qh", "8d", "jc", "2c", "AC"))
+        self.assertEqual(self.state[FOUNDATION_C], ())
         self.assertEqual(state2[TABLEAU5], ("qh", "8d", "jc", "2C"))
         self.assertEqual(state2[FOUNDATION_C], ("AC",))
+
+    def test_move_last_card_in_tableau_to_tableau(self):
+        self.assertEqual(self.state[TABLEAU1], ("8H",))
+        self.assertEqual(self.state[TABLEAU4], ("2h", "kd", "7c", "9S"))
+        state2 = move(self.state, TABLEAU1, TABLEAU4)
+        # nothing changed in self.state
+        self.assertEqual(self.state[TABLEAU1], ("8H",))
+        self.assertEqual(self.state[TABLEAU4], ("2h", "kd", "7c", "9S"))
+        self.assertEqual(state2[TABLEAU1], ())
+        self.assertEqual(state2[TABLEAU4], ("2h", "kd", "7c", "9S", "8H"))
 
 
 if __name__ == "__main__":
