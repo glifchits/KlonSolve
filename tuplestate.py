@@ -91,6 +91,15 @@ def draw(state):
     return KlonState(*new_state)
 
 
+def replace_stock(state):
+    new_waste = state[STOCK]  # directly swap the stock and waste
+    new_stock = state[WASTE]
+    new_state = list(state)
+    new_state[STOCK] = new_stock
+    new_state[WASTE] = new_waste
+    return KlonState(*new_state)
+
+
 import unittest
 import json
 
@@ -190,6 +199,42 @@ class TestState(unittest.TestCase):
         self.assertEqual(state2[WASTE], ("3H", "TD", "2D"))
         st2 = "KC,9C,QC,8C,3C,7S,7H,TC,4C,7D,KS,AD,QS,KH,QD,TH,8S,AH,6H,4H,AS"
         self.assertEqual(",".join(state2[STOCK]), st2)
+
+    def test_deplete_stock(self):
+        self.assertEqual(self.state[WASTE], ())
+        st1 = "KC,9C,QC,8C,3C,7S,7H,TC,4C,7D,KS,AD,QS,KH,QD,TH,8S,AH,6H,4H,AS,2D,TD,3H"
+        self.assertEqual(",".join(self.state[STOCK]), st1)
+
+        state2 = draw(self.state)
+        state2 = draw(state2)
+        state2 = draw(state2)
+        state2 = draw(state2)
+        state2 = draw(state2)
+        state2 = draw(state2)
+        state2 = draw(state2)
+        state2 = draw(state2)
+
+        w2 = "3H,TD,2D,AS,4H,6H,AH,8S,TH,QD,KH,QS,AD,KS,7D,4C,TC,7H,7S,3C,8C,QC,9C,KC"
+        self.assertEqual(",".join(state2[WASTE]), w2)
+        self.assertEqual(state2[STOCK], ())
+
+    def test_replace_stock(self):
+        state = draw(self.state)
+        while len(state[STOCK]) > 0:
+            state = draw(state)
+        w2 = "3H,TD,2D,AS,4H,6H,AH,8S,TH,QD,KH,QS,AD,KS,7D,4C,TC,7H,7S,3C,8C,QC,9C,KC"
+        self.assertEqual(",".join(state[WASTE]), w2)
+        self.assertEqual(state[STOCK], ())
+
+        state2 = replace_stock(state)
+        s2 = "3H,TD,2D,AS,4H,6H,AH,8S,TH,QD,KH,QS,AD,KS,7D,4C,TC,7H,7S,3C,8C,QC,9C,KC"
+        self.assertEqual(",".join(state2[STOCK]), s2)
+        self.assertEqual(state2[WASTE], ())
+
+        state3 = draw(state2)
+        self.assertEqual(state3[WASTE], ("KC", "9C", "QC"))
+        s3 = "3H,TD,2D,AS,4H,6H,AH,8S,TH,QD,KH,QS,AD,KS,7D,4C,TC,7H,7S,3C,8C"
+        self.assertEqual(",".join(state3[STOCK]), s3)
 
 
 if __name__ == "__main__":
