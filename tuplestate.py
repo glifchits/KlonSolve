@@ -1,4 +1,5 @@
 from collections import namedtuple
+from pprint import pprint
 
 
 KlonState = namedtuple(
@@ -99,6 +100,82 @@ def replace_stock(state):
     new_state[STOCK] = new_stock
     new_state[WASTE] = new_waste
     return KlonState(*new_state)
+
+
+def to_dict(state):
+    TABLEAU = [TABLEAU1, TABLEAU2, TABLEAU3, TABLEAU4, TABLEAU5, TABLEAU6, TABLEAU7]
+    FND = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
+    return {
+        "stock": state.stock,
+        "waste": state.waste,
+        "tableau": list(map(lambda t: state[t], TABLEAU)),
+        "foundations": list(map(lambda f: state[f], FND)),
+    }
+
+
+def play_move(state, move_code):
+    """
+    5C F5 5C F5 DR3 W5 45 F4 41 F4 DR1 W4 74 F7 DR3 W7 WC DR1 NEW DR2 W1
+    W6 WS DR3 W4 WC 74-2 F7 61-2 F6 67 F6 61 F6 6S F6 1S W4 64 F6 6S W6 WD
+    15-5 W1 W6 36 F3 W7 WH WD DR1 W1 31 F3 3S 4S WS 71-3 F7 W1 43-7 F4 4H
+    W6 WH 5H 5C 2C F2 2D 7D F7 7D F7 7D F7 7H 5H 1H 3D 5C 1S 3C 5H 5S 3H
+    5H DR1 W2 WC 3C 5C F5 5D F5 1D 1S 6D 1D 3H 6S 1C 3S 5H 6D 1H 2C 3D 6S
+    """
+
+    "DR# is a draw move that is done # number of times. "
+    "ie) DR2 means draw twice, if draw count > 1 it is still DR2."
+    if move_code.startswith("DR"):
+        s = draw(state)  # draw once, local state variable
+        remaining_draws = int(move_code[-1]) - 1  # subtract one draw
+        for _ in range(remaining_draws):
+            s = draw(s)
+        return s
+
+    "NEW is to represent the moving of cards from the"
+    "Waste pile back to the stock pile. A New round."
+    if move_code == "NEW":
+        return replace_stock(state)
+
+    "F# means to flip the card on tableau pile #."
+    # I don't implement flipping cards, it happens automatically
+    if move_code.startswith("F"):
+        return state
+
+    """XY means to move the top card from pile X to pile Y.
+		X will be 1 through 7, W for Waste, or a foundation suit character.
+                'C'lubs, 'D'iamonds, 'S'pades, 'H'earts
+		Y will be 1 through 7 or the foundation suit character.
+	XY-# is the same as above except you are moving # number of cards from X to Y.
+    """
+    TABLEAU = {
+        "1": TABLEAU1,
+        "2": TABLEAU2,
+        "3": TABLEAU3,
+        "4": TABLEAU4,
+        "5": TABLEAU5,
+        "6": TABLEAU6,
+        "7": TABLEAU7,
+    }
+    FOUNDATION = {
+        "C": FOUNDATION_C,
+        "D": FOUNDATION_D,
+        "S": FOUNDATION_S,
+        "H": FOUNDATION_H,
+    }
+    SRC_MOVES = {**TABLEAU, **FOUNDATION, "W": WASTE}
+    DEST_MOVES = {**TABLEAU, **FOUNDATION}
+    if "-" in move_code:
+        xy, num = move_code.split("-")
+        x, y = xy
+        src = TABLEAU[x]
+        dest = TABLEAU[y]
+        cards = int(num)
+    else:
+        x, y = move_code
+        src = SRC_MOVES[x]
+        dest = DEST_MOVES[y]
+        cards = 1
+    return move(state, src, dest, cards=cards)
 
 
 import unittest
@@ -282,6 +359,48 @@ class TestState(unittest.TestCase):
         # after draw, two cards should be empty
         self.assertEqual(state2[STOCK], ())
         self.assertEqual(state2[WASTE][-2:], ("TD", "3H"))
+
+    def test_entire_game(self):
+        verbose = False
+        W = 160
+        state = self.state
+        soln = (
+            "5C F5 5C F5 DR3 W5 45 F4 41 F4 DR1 W4 74 F7 DR3 W7 WC DR1 NEW DR2 W1 "
+            "W6 WS DR3 W4 WC 74-2 F7 61-2 F6 67 F6 61 F6 6S F6 1S W4 64 F6 6S W6 WD "
+            "15-5 W1 W6 36 F3 W7 WH WD DR1 W1 31 F3 3S 4S WS 71-3 F7 W1 43-7 F4 4H "
+            "W6 WH 5H 5C 2C F2 2D 7D F7 7D F7 7D F7 7H 5H 1H 3D 5C 1S 3C 5H 5S 3H "
+            "5H DR1 W2 WC 3C 5C F5 5D F5 1D 1S 6D 1D 3H 6S 1C 3S 5H 6D 1H 2C 3D 6S"
+        ).split(" ")
+
+        if verbose:
+            pprint(to_dict(state), width=W)
+            print()
+
+        while len(soln) > 0:
+            move_code = soln.pop(0)
+            state = play_move(state, move_code)
+            if verbose and not move_code.startswith("F"):
+                print("move code", move_code)
+                pprint(to_dict(state), width=W)
+                print()
+
+        foundation_suits = "CDSH"
+        foundations = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
+        for foundation in foundations:
+            self.assertEqual(len(state[foundation]), 13)
+
+        cards = "A23456789TJQK"
+        for suit, fnd in zip(foundation_suits, foundations):
+            for card_value, actual_card in zip(cards, state[fnd]):
+                expected_card = card_value + suit
+                self.assertEqual(actual_card, expected_card)
+
+        tableau = [TABLEAU1, TABLEAU2, TABLEAU3, TABLEAU4, TABLEAU5, TABLEAU6, TABLEAU7]
+        for talon in tableau:
+            self.assertEqual(state[talon], ())
+
+        self.assertEqual(state.stock, ())
+        self.assertEqual(state.waste, ())
 
 
 if __name__ == "__main__":
