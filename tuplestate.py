@@ -159,14 +159,20 @@ def get_legal_moves(state):
         for dest in TABLEAUS:
             if src == dest:
                 continue
-            for i, src_faceup in enumerate(FACEUP[src]):
-                if can_stack_tableau(src_faceup, state[dest][-1]):
-                    move = f"{src}{dest}"
-                    if i > 0:
-                        move += f"-{i+1}"
+            for i, src_card in enumerate(FACEUP[src]):
+                move = f"{src}{dest}"
+                if i > 0:
+                    move += f"-{i+1}"
+
+                if len(state[dest]) == 0:  # tableau empty
+                    if src_card[VALUE] == "K":
+                        moves.add(move)
+                elif can_stack_tableau(src_card, state[dest][-1]):
                     moves.add(move)
     # tab to foundation
     for src in TABLEAUS:
+        if len(state[src]) == 0:
+            continue  # can't move empty to foundation
         src_top = state[src][-1]
         for fnd, fnd_suit in zip(FNDS, "CDSH"):
             move = f"{src}{fnd_suit}"
@@ -191,6 +197,10 @@ def to_dict(state):
         "tableau": list(map(lambda t: state[t], TABLEAU)),
         "foundations": list(map(lambda f: state[f], FND)),
     }
+
+
+def pprint_st(state):
+    pprint(to_dict(state))
 
 
 def play_move(state, move_code):
@@ -482,10 +492,17 @@ class TestState(unittest.TestCase):
         self.assertEqual(state.stock, ())
         self.assertEqual(state.waste, ())
 
-    def test_get_legal_moves(self):
+    def test_get_legal_moves_1(self):
         # pprint(to_dict(self.state))
         actual = get_legal_moves(self.state)
         expected = set(["5C", "14"])  # move AC to foundation, move 8H onto 9S
+        self.assertEqual(expected, actual)
+
+    def test_get_legal_moves_2(self):
+        state = move(self.state, TABLEAU1, TABLEAU4)
+        # pprint_st(state)
+        actual = get_legal_moves(state)
+        expected = set(["5C"])  # move AC to foundation
         self.assertEqual(expected, actual)
 
 
