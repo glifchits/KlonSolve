@@ -312,6 +312,48 @@ def pprint_st(state):
     pprint(to_dict(state))
 
 
+def init_from_dict(game):
+    tableau = game["tableau"]
+    foundation = game["foundations"]
+    return KlonState(
+        stock=game["stock"],
+        waste=game["waste"],
+        tableau1=tableau[0],
+        tableau2=tableau[1],
+        tableau3=tableau[2],
+        tableau4=tableau[3],
+        tableau5=tableau[4],
+        tableau6=tableau[5],
+        tableau7=tableau[6],
+        foundation1=foundation[0],
+        foundation2=foundation[1],
+        foundation3=foundation[2],
+        foundation4=foundation[3],
+    )
+
+
+def state_is_win(state):
+    cards = "A23456789TJQK"
+    if len(state.stock) != 0:
+        return False
+    if len(state.waste) != 0:
+        return False
+    for fnd in FNDS:
+        if len(state[fnd]) != 13:
+            return False
+    for tab in irange(TABLEAU1, TABLEAU7):
+        if len(state[tab]) != 0:
+            return False
+    for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+        fnd_pile = state[fnd]
+        for card, expected_value in zip(fnd_pile, cards):
+            if card[SUIT] != fnd_suit:
+                return False
+            if card[VALUE] != expected_value:
+                return False
+    return True
+
+
 def play_move(state, move_code):
     """
     Given a move code, perform that move and return the new state
