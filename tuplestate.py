@@ -222,7 +222,7 @@ def get_legal_moves(state):
         for dest in TABLEAUS:
             if src == dest:
                 continue
-            for i, src_card in enumerate(FACEUP[src]):
+            for i, src_card in enumerate(reversed(FACEUP[src])):
                 move = f"{src}{dest}"
                 if i > 0:
                     move += f"-{i+1}"
@@ -668,6 +668,7 @@ class TestState(unittest.TestCase):
         expected.add("C3")  # move 3C from foundation onto 4H
         expected.add("S3")  # move 3S from foundation onto 4H
         expected.add("17")  # move 8C to 9D (useless move)
+        expected.add("35-7")  # move 10H+7 onto JC (useless move)
         for i in irange(1, 6):
             expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
