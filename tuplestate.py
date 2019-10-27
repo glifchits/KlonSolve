@@ -158,16 +158,18 @@ def get_draw_moves(state):
     st = copy(state)
     draw_moves = set()
     top_cards = set()
+    if len(st.waste) > 0:
+        top_cards.add(st.waste[-3:])  # current waste is available
     for draw_count in range(200):  # should be way more than enough
+        if len(st.stock) == 0:
+            st = replace_stock(st)
         st = draw(st)
+        new_move = f"DR{draw_count+1}"
         top_waste = st[WASTE][-3:]
         if top_waste in top_cards:
             return draw_moves
         top_cards.add(top_waste)
-        draw_moves.add(f"DR{draw_count+1}")
-        # if the stock is empty, replenish
-        if len(st.stock) == 0:
-            st = replace_stock(st)
+        draw_moves.add(new_move)
     return draw_moves
 
 
@@ -553,7 +555,21 @@ class TestState(unittest.TestCase):
         expected.add("43")  # move 9S onto TH
         expected.add("14")  # move 8H onto 9S
         # I counted 12 moves until it started looping
-        for i in range(1, 12 + 1):
+        for i in irange(1, 12):
+            expected.add(f"DR{i}")
+        self.assertEqual(expected, actual)
+
+    def test_king_to_tableau(self):
+        state = copy(self.state)
+        for _ in range(8):
+            state = draw(state)
+        self.assertEqual(state.waste[-1], "KC")
+        state = move(state, TABLEAU1, TABLEAU4)  # move 8H onto 9S
+        actual = get_legal_moves(state)
+        expected = set()
+        expected.add("5C")  # move AC onto foundation
+        expected.add("W1")  # move KC onto tableau 1
+        for i in irange(1, 7):  # 7 moves until starts looping (Q9K)
             expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
 
