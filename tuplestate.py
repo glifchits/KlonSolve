@@ -731,6 +731,31 @@ class TestState(unittest.TestCase):
             expected.add(f"DR{i}")
         self.assertEqual(actual, expected)
 
+    def test_waste_ace_to_foundation(self):
+        state = copy(self.state)
+        for _ in range(3):
+            state = draw(state)
+        self.assertEqual(state.waste[-1], "TH")
+        state = move(state, WASTE, TABLEAU3)
+        for _ in range(5):
+            state = draw(state)
+        self.assertEqual(state.stock, ())
+        self.assertEqual(state.waste[-1], "KC")
+        state = replace_stock(state)
+        for _ in range(4):
+            state = draw(state)
+        self.assertEqual(state.waste[-1], "AD")
+        # get moves for this state
+        actual = get_legal_moves(state)
+        expected = set()
+        expected.add("WD")  # move AD from waste to foundation
+        expected.add("5C")  # move AC from tableau to foundation
+        expected.add("14")  # move 8H onto 9S
+        expected.add("43")  # move 9S onto TH
+        for i in irange(1, 7):
+            expected.add(f"DR{i}")
+        self.assertEqual(expected, actual)
+
 
 if __name__ == "__main__":
     unittest.main()
