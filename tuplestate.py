@@ -113,6 +113,10 @@ def draw(state):
     return KlonState(*new_state)
 
 
+def copy(state):
+    return KlonState(*state)
+
+
 def replace_stock(state):
     new_waste = ()
     new_stock = tuple(reversed(state[WASTE]))  # reverse the waste pile
@@ -143,6 +147,23 @@ def can_stack_tableau(src, dest):
     if src[SUIT] in BLACK and dest[SUIT] in BLACK:
         return False
     return (src[VALUE], dest[VALUE]) in VALUE_ORDER
+
+
+def get_draw_moves(state):
+    st = copy(state)
+    draw_moves = set()
+    top_cards = set()
+    for draw_count in range(200):  # should be way more than enough
+        st = draw(st)
+        top_waste = st[WASTE][-3:]
+        if top_waste in top_cards:
+            return draw_moves
+        top_cards.add(top_waste)
+        draw_moves.add(f"DR{draw_count+1}")
+        # if the stock is empty, replenish
+        if len(st.stock) == 0:
+            st = replace_stock(st)
+    return draw_moves
 
 
 def get_legal_moves(state):
@@ -185,6 +206,8 @@ def get_legal_moves(state):
                     ord = (src_top[VALUE], dest_top[VALUE])
                     if ord in VALUE_ORDER:
                         moves.add(move)
+    # draw moves
+    moves = moves.union(get_draw_moves(state))
     return moves
 
 
@@ -496,6 +519,9 @@ class TestState(unittest.TestCase):
         # pprint(to_dict(self.state))
         actual = get_legal_moves(self.state)
         expected = set(["5C", "14"])  # move AC to foundation, move 8H onto 9S
+        # can draw 1-8 until you start looping
+        for i in range(1, 8 + 1):
+            expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
 
     def test_get_legal_moves_2(self):
@@ -503,6 +529,9 @@ class TestState(unittest.TestCase):
         # pprint_st(state)
         actual = get_legal_moves(state)
         expected = set(["5C"])  # move AC to foundation
+        # can draw 1-8 until you start looping
+        for i in range(1, 8 + 1):
+            expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
 
 
