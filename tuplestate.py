@@ -322,11 +322,13 @@ def play_move(state, move_code):
     ie) DR2 means draw twice, if draw count > 1 it is still DR2.
     """
     if move_code.startswith("DR"):
-        s = draw(state)  # draw once, local state variable
-        remaining_draws = int(move_code[-1]) - 1  # subtract one draw
-        for _ in range(remaining_draws):
-            s = draw(s)
-        return s
+        st = copy(state)
+        draws = int(move_code[2:])
+        for draws_remaining in irange(draws, 1):
+            if len(st.stock) == 0 and draws_remaining > 0:
+                st = replace_stock(st)
+            st = draw(st)
+        return st
 
     """
     NEW is to represent the moving of cards from the

@@ -391,6 +391,17 @@ class TestState(unittest.TestCase):
         expected = [10, 9, 8, 7, 6, 5]
         self.assertEqual(expected, actual)
 
+    def test_play_move_draws_more_than_stock(self):
+        state = copy(self.state)
+        # self.assertTrue(False)
+        dr8 = play_move(state, "DR8")
+        self.assertEqual(dr8.waste[-1], "KC")
+        dr9 = draw(dr8)
+        self.assertEqual(dr9.stock, ())
+        self.assertEqual(dr9.waste[-1], "KC")
+        self.assertEqual(play_move(state, "DR9").waste[-1], "2D")
+        self.assertEqual(play_move(state, "DR14").waste[-1], "7H")
+
 
 if __name__ == "__main__":
     unittest.main()
