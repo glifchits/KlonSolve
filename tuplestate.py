@@ -311,15 +311,13 @@ def pprint_st(state):
 
 def play_move(state, move_code):
     """
-    5C F5 5C F5 DR3 W5 45 F4 41 F4 DR1 W4 74 F7 DR3 W7 WC DR1 NEW DR2 W1
-    W6 WS DR3 W4 WC 74-2 F7 61-2 F6 67 F6 61 F6 6S F6 1S W4 64 F6 6S W6 WD
-    15-5 W1 W6 36 F3 W7 WH WD DR1 W1 31 F3 3S 4S WS 71-3 F7 W1 43-7 F4 4H
-    W6 WH 5H 5C 2C F2 2D 7D F7 7D F7 7D F7 7H 5H 1H 3D 5C 1S 3C 5H 5S 3H
-    5H DR1 W2 WC 3C 5C F5 5D F5 1D 1S 6D 1D 3H 6S 1C 3S 5H 6D 1H 2C 3D 6S
+    Given a move code, perform that move and return the new state
+    Follows ShootMe/Klondike-Solver move codex convention
     """
-
-    "DR# is a draw move that is done # number of times. "
-    "ie) DR2 means draw twice, if draw count > 1 it is still DR2."
+    """
+    DR# is a draw move that is done # number of times.
+    ie) DR2 means draw twice, if draw count > 1 it is still DR2.
+    """
     if move_code.startswith("DR"):
         s = draw(state)  # draw once, local state variable
         remaining_draws = int(move_code[-1]) - 1  # subtract one draw
@@ -327,8 +325,10 @@ def play_move(state, move_code):
             s = draw(s)
         return s
 
-    "NEW is to represent the moving of cards from the"
-    "Waste pile back to the stock pile. A New round."
+    """
+    NEW is to represent the moving of cards from the
+    Waste pile back to the stock pile. A New round.
+    """
     if move_code == "NEW":
         return replace_stock(state)
 
@@ -337,7 +337,8 @@ def play_move(state, move_code):
     if move_code.startswith("F"):
         return state
 
-    """XY means to move the top card from pile X to pile Y.
+    """
+    XY means to move the top card from pile X to pile Y.
 		X will be 1 through 7, W for Waste, or a foundation suit character.
                 'C'lubs, 'D'iamonds, 'S'pades, 'H'earts
 		Y will be 1 through 7 or the foundation suit character.
