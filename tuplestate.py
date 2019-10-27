@@ -262,6 +262,21 @@ def get_legal_moves(state):
                 dest_top = state[dest][-1]
                 if can_stack(waste_top, dest_top):
                     moves.add(move)
+    # waste to foundation
+    if len(state.waste) > 0:
+        waste_top = state.waste[-1]
+        for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+            if waste_top[SUIT] != fnd_suit:
+                continue  # only bother looking at the correct foundation
+            move = f"W{fnd_suit}"
+            if len(state[fnd]) == 0:
+                if waste_top[VALUE] == "A":
+                    moves.add(move)
+            else:
+                fnd_top = state[fnd][-1]
+                order = (fnd_top[VALUE], waste_top[VALUE])
+                if order in VALUE_ORDER:
+                    moves.add(move)
     # foundation to tableau
     for fnd, fnd_suit in zip(FNDS, FND_SUITS):
         if len(state[fnd]) == 0:
@@ -672,6 +687,49 @@ class TestState(unittest.TestCase):
         for i in irange(1, 6):
             expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
+
+    def test_waste_to_foundation(self):
+        game = {
+            "foundation": [["AC", "2C"], [], [], []],
+            "waste": [
+                "3H",
+                "10D",
+                "2D",
+                "AS",
+                "4H",
+                "6H",
+                "AH",
+                "8S",
+                "QD",
+                "KH",
+                "AD",
+                "KS",
+                "7D",
+                "4C",
+                "10C",
+                "7H",
+                "7S",
+                "3C",
+            ],
+            "stock": ["kc", "9c", "qc"],
+            "tableau": [
+                ["KD", "QS", "JH"],
+                ["3d", "6C"],
+                ["5s", "jd", "JS", "10H", "9S", "8H", "7C"],
+                ["2H"],
+                ["qh", "8d", "JC"],
+                ["4s", "6s", "2s", "3s", "9d", "5C"],
+                ["5h", "6d", "5d", "4d", "10s", "9H", "8C"],
+            ],
+        }
+        state = init_from_ui_state(game)
+        actual = get_legal_moves(state)
+        expected = set()
+        expected.add("WC")  # move 3C from waste to foundation (2C)
+        expected.add("35-4")  # move TH+4 onto JC (useless move)
+        for i in irange(1, 6):
+            expected.add(f"DR{i}")
+        self.assertEqual(actual, expected)
 
 
 if __name__ == "__main__":
