@@ -34,6 +34,7 @@ FOUNDATION_C = 9
 FOUNDATION_D = 10
 FOUNDATION_S = 11
 FOUNDATION_H = 12
+FND_SUITS = "CDSH"
 
 VALUE = 0  # the 0th index of a card string
 SUIT = 1  # the 1st index of a card string
@@ -59,6 +60,38 @@ VALUE_ORDER = set(
 def irange(start, stop):
     """ inclusive range """
     return range(start, stop + 1)
+
+
+def init_from_ui_state(game_dict):
+    def card(c):
+        """ fixes up card definitions for UI format compat """
+        if c.startswith("10"):
+            t = "t" if c[-1] in "cdsh" else "T"
+            return c.replace("10", t)
+        return c
+
+    def mapcards(it):
+        return tuple(map(card, it))
+
+    foundation = tuple(mapcards(f) for f in game_dict["foundation"])
+    stock = tuple(card(c).upper() for c in game_dict["stock"])
+    waste = tuple(mapcards(game_dict["waste"]))
+    tableau = [mapcards(t) for t in game_dict["tableau"]]
+    return KlonState(
+        stock=stock,
+        waste=waste,
+        tableau1=tableau[0],
+        tableau2=tableau[1],
+        tableau3=tableau[2],
+        tableau4=tableau[3],
+        tableau5=tableau[4],
+        tableau6=tableau[5],
+        tableau7=tableau[6],
+        foundation1=foundation[0],
+        foundation2=foundation[1],
+        foundation3=foundation[2],
+        foundation4=foundation[3],
+    )
 
 
 def init_from_solvitaire(game_dict):
@@ -142,17 +175,18 @@ def count_face_up(pile):
             # therefore the (i-1)th card is face-up
             # we want a count so we want (i-1)+1 = i
             return i
+    return len(pile)  # (== i+1) all cards are face up
 
 
-def can_stack_tableau(src, dest):
-    """ src is the card to move, dest is the card to stack onto """
+def can_stack(card, onto):
+    """ `card` is the card to move, `onto` is the card to stack onto """
     RED = "DH"
     BLACK = "CS"
-    if src[SUIT] in RED and dest[SUIT] in RED:
+    if card[SUIT] in RED and onto[SUIT] in RED:
         return False
-    if src[SUIT] in BLACK and dest[SUIT] in BLACK:
+    if card[SUIT] in BLACK and onto[SUIT] in BLACK:
         return False
-    return (src[VALUE], dest[VALUE]) in VALUE_ORDER
+    return (card[VALUE], onto[VALUE]) in VALUE_ORDER
 
 
 def get_draw_moves(state):
@@ -196,22 +230,22 @@ def get_legal_moves(state):
                 if len(state[dest]) == 0:  # tableau empty
                     if src_card[VALUE] == "K":
                         moves.add(move)
-                elif can_stack_tableau(src_card, state[dest][-1]):
+                elif can_stack(src_card, state[dest][-1]):
                     moves.add(move)
     # tab to foundation
     for src in TABLEAUS:
         if len(state[src]) == 0:
             continue  # can't move empty to foundation
         src_top = state[src][-1]
-        for fnd, fnd_suit in zip(FNDS, "CDSH"):
+        for fnd, fnd_suit in zip(FNDS, FND_SUITS):
             move = f"{src}{fnd_suit}"
             if len(state[fnd]) == 0:
                 if src_top[VALUE] == "A" and src_top[SUIT] == fnd_suit:
                     moves.add(move)
             else:
-                fnd_top = fnd_pile[-1]
+                fnd_top = state[fnd][-1]
                 if src_top[SUIT] == fnd_top[SUIT]:
-                    ord = (src_top[VALUE], dest_top[VALUE])
+                    ord = (src_top[VALUE], fnd_top[VALUE])
                     if ord in VALUE_ORDER:
                         moves.add(move)
     # waste to tableau
@@ -226,8 +260,20 @@ def get_legal_moves(state):
             else:
                 # non-empty tableau pile, can stack normally
                 dest_top = state[dest][-1]
-                if can_stack_tableau(waste_top, dest_top):
+                if can_stack(waste_top, dest_top):
                     moves.add(move)
+    # foundation to tableau
+    for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+        if len(state[fnd]) == 0:
+            continue  # can't move any cards from an empty foundation
+        fnd_top = state[fnd][-1]
+        for tab in TABLEAUS:
+            if len(state[tab]) == 0:
+                continue  # not gonna move a king onto empty tableau
+            tab_top = state[tab][-1]
+            if can_stack(fnd_top, tab_top):
+                move = f"{fnd_suit}{tab}"
+                moves.add(move)
     # draw moves
     moves = moves.union(get_draw_moves(state))
     return moves
@@ -598,6 +644,31 @@ class TestState(unittest.TestCase):
         expected.add("14")  # move 8H onto 9S
         expected.add("W3")  # move waste TH onto JS
         for i in irange(1, 7):
+            expected.add(f"DR{i}")
+        self.assertEqual(expected, actual)
+
+    def test_foundation_to_tableau(self):
+        game = {
+            "foundation": [["AC", "2C", "3C"], [], ["AS", "2S", "3S"], []],
+            "waste": "3H,10D,2D,AH,8S,QD,KH,AD,KS,7D,4C,7H,7S".split(","),
+            "stock": ["kc", "9c", "qc"],
+            "tableau": [
+                ["KD", "QS", "JH", "10C", "9H", "8C"],
+                ["3d", "6C"],
+                ["5s", "jd", "JS", "10H", "9S", "8H", "7C", "6H", "5C", "4H"],
+                ["2H"],
+                ["qh", "8d", "JC"],
+                ["4s", "6S"],
+                ["5h", "6d", "5d", "4d", "10S", "9D"],
+            ],
+        }
+        state = init_from_ui_state(game)
+        actual = get_legal_moves(state)
+        expected = set()
+        expected.add("C3")  # move 3C from foundation onto 4H
+        expected.add("S3")  # move 3S from foundation onto 4H
+        expected.add("17")  # move 8C to 9D (useless move)
+        for i in irange(1, 6):
             expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
 
