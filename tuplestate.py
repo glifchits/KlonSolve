@@ -534,6 +534,24 @@ class TestState(unittest.TestCase):
             expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
 
+    def test_kplus_state_1(self):
+        state = copy(self.state)
+        for _ in range(3):
+            state = draw(state)
+        self.assertEqual(state.waste[-1], "TH")
+        state = move(state, WASTE, TABLEAU3)
+        self.assertEqual(state.tableau3[-1], "TH")
+        # count moves for this state
+        actual = get_legal_moves(state)
+        expected = set()
+        expected.add("5C")  # move AC to foundation
+        expected.add("43")  # move 9S onto TH
+        expected.add("14")  # move 8H onto 9S
+        # I counted 12 moves until it started looping
+        for i in range(1, 12 + 1):
+            expected.add(f"DR{i}")
+        self.assertEqual(expected, actual)
+
 
 if __name__ == "__main__":
     unittest.main()
