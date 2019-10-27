@@ -59,7 +59,10 @@ VALUE_ORDER = set(
 
 def irange(start, stop):
     """ inclusive range """
-    return range(start, stop + 1)
+    if start <= stop:
+        return range(start, stop + 1)
+    elif start > stop:
+        return range(start, stop - 1, -1)
 
 
 def init_from_ui_state(game_dict):

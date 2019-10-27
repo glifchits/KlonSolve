@@ -381,6 +381,16 @@ class TestState(unittest.TestCase):
             expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
 
+    def test_irange_forward(self):
+        expected = [4, 5, 6, 7, 8, 9]
+        actual = list(irange(4, 9))
+        self.assertEqual(expected, actual)
+
+    def test_irange_backward(self):
+        actual = list(irange(10, 5))
+        expected = [10, 9, 8, 7, 6, 5]
+        self.assertEqual(expected, actual)
+
 
 if __name__ == "__main__":
     unittest.main()
