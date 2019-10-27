@@ -56,6 +56,11 @@ VALUE_ORDER = set(
 )
 
 
+def irange(start, stop):
+    """ inclusive range """
+    return range(start, stop + 1)
+
+
 def init_from_solvitaire(game_dict):
     def card(c):
         """ fixes up card definitions for Solvitaire format compat """
@@ -169,7 +174,7 @@ def get_draw_moves(state):
 def get_legal_moves(state):
     """ returns a set of legal moves given the state """
     moves = set()
-    TABLEAUS = range(TABLEAU1, TABLEAU7 + 1)
+    TABLEAUS = irange(TABLEAU1, TABLEAU7)
     FACEUP = {}
     for tab in TABLEAUS:
         pile = state[tab]
@@ -508,7 +513,7 @@ class TestState(unittest.TestCase):
                 expected_card = card_value + suit
                 self.assertEqual(actual_card, expected_card)
 
-        tableau = [TABLEAU1, TABLEAU2, TABLEAU3, TABLEAU4, TABLEAU5, TABLEAU6, TABLEAU7]
+        tableau = irange(TABLEAU1, TABLEAU7)
         for tab in tableau:
             self.assertEqual(state[tab], ())
 
@@ -520,7 +525,7 @@ class TestState(unittest.TestCase):
         actual = get_legal_moves(self.state)
         expected = set(["5C", "14"])  # move AC to foundation, move 8H onto 9S
         # can draw 1-8 until you start looping
-        for i in range(1, 8 + 1):
+        for i in irange(1, 8):
             expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
 
@@ -530,7 +535,7 @@ class TestState(unittest.TestCase):
         actual = get_legal_moves(state)
         expected = set(["5C"])  # move AC to foundation
         # can draw 1-8 until you start looping
-        for i in range(1, 8 + 1):
+        for i in irange(1, 8):
             expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
 
