@@ -145,6 +145,7 @@ def count_face_up(pile):
 
 
 def can_stack_tableau(src, dest):
+    """ src is the card to move, dest is the card to stack onto """
     RED = "DH"
     BLACK = "CS"
     if src[SUIT] in RED and dest[SUIT] in RED:
@@ -213,6 +214,20 @@ def get_legal_moves(state):
                     ord = (src_top[VALUE], dest_top[VALUE])
                     if ord in VALUE_ORDER:
                         moves.add(move)
+    # waste to tableau
+    if len(state.waste) > 0:
+        waste_top = state.waste[-1]
+        for dest in TABLEAUS:
+            move = f"W{dest}"
+            if len(state[dest]) == 0:
+                # empty tableau, can move a king
+                if waste_top[VALUE] == "K":
+                    moves.add(move)
+            else:
+                # non-empty tableau pile, can stack normally
+                dest_top = state[dest][-1]
+                if can_stack_tableau(waste_top, dest_top):
+                    moves.add(move)
     # draw moves
     moves = moves.union(get_draw_moves(state))
     return moves
@@ -559,7 +574,7 @@ class TestState(unittest.TestCase):
             expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
 
-    def test_king_to_tableau(self):
+    def test_waste_king_to_empty_tableau(self):
         state = copy(self.state)
         for _ in range(8):
             state = draw(state)
@@ -570,6 +585,19 @@ class TestState(unittest.TestCase):
         expected.add("5C")  # move AC onto foundation
         expected.add("W1")  # move KC onto tableau 1
         for i in irange(1, 7):  # 7 moves until starts looping (Q9K)
+            expected.add(f"DR{i}")
+        self.assertEqual(expected, actual)
+
+    def test_waste_to_tableau_pile(self):
+        state = copy(self.state)
+        for _ in range(3):
+            state = draw(state)
+        actual = get_legal_moves(state)
+        expected = set()
+        expected.add("5C")  # move AC to foundation
+        expected.add("14")  # move 8H onto 9S
+        expected.add("W3")  # move waste TH onto JS
+        for i in irange(1, 7):
             expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
 
