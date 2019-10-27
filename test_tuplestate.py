@@ -402,6 +402,30 @@ class TestState(unittest.TestCase):
         self.assertEqual(play_move(state, "DR9").waste[-1], "2D")
         self.assertEqual(play_move(state, "DR14").waste[-1], "7H")
 
+    def test_state_equality(self):
+        state1 = copy(self.state)
+        moves = get_legal_moves(state1)
+        draws = [m for m in moves if m.startswith("DR")]
+        highest_draw = max(draws, key=lambda dr: int(dr[2:]))
+        state2 = play_move(state1, highest_draw)
+        state3 = replace_stock(draw(state2))
+        self.assertEqual(state1, state3)
+        self.assertEqual(draw(state1), draw(state3))
+        self.assertNotEqual(state1, draw(state1))
+        self.assertNotEqual(state1, draw(state3))
+
+    def test_state_hashing(self):
+        state1 = copy(self.state)
+        moves = get_legal_moves(state1)
+        draws = [m for m in moves if m.startswith("DR")]
+        highest_draw = max(draws, key=lambda dr: int(dr[2:]))
+        state2 = play_move(state1, highest_draw)
+        state3 = replace_stock(draw(state2))
+        self.assertEqual(hash(state1), hash(state3))
+        self.assertEqual(hash(draw(state1)), hash(draw(state3)))
+        self.assertNotEqual(hash(state1), hash(draw(state1)))
+        self.assertNotEqual(hash(state1), hash(draw(state3)))
+
 
 if __name__ == "__main__":
     unittest.main()
