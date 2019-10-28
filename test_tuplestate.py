@@ -382,6 +382,44 @@ class TestState(unittest.TestCase):
             expected.add(f"DR{i}")
         self.assertEqual(expected, actual)
 
+    def test_endgame_1(self):
+        game = {
+            "foundation": [
+                ["AC", "2C", "3C", "4C", "5C", "6C", "7C", "8C", "9C", "10C"],
+                ["AD", "2D", "3D", "4D", "5D", "6D", "7D"],
+                ["AS", "2S", "3S", "4S", "5S", "6S", "7S", "8S", "9S"],
+                ["AH", "2H", "3H", "4H", "5H", "6H", "7H", "8H", "9H", "10H", "JH"],
+            ],
+            "waste": [],
+            "stock": [],
+            "tableau": [
+                ["KD", "QS"],
+                ["KC"],
+                [],
+                ["KH", "QC", "JD", "10S", "9D"],
+                ["qh", "8d", "JC", "10D"],
+                ["KS", "QD", "JS"],
+                [],
+            ],
+        }
+        state = init_from_ui_state(game)
+        actual = get_legal_moves(state)
+        expected = set()
+        expected.add("56")  # move TD onto JS
+        expected.add("62-2")  # move red Q onto K
+        expected.add("67-3")  # move stack to empty
+        expected.add("H1")  # bring JH off foundation onto QS
+        expected.add("23")  # move K to empty stack
+        expected.add("17-2")  # move stack to empty
+        expected.add("41-3")  # move red J+2 onto QS
+        expected.add("43-5")  # move stack to empty
+        expected.add("S5")  # move 9S off foundation to TD
+        expected.add("27")  # move K to empty stack
+        expected.add("13-2")  # move K+1 to empty stack
+        expected.add("47-5")  # move K+4 onto empty stack
+        expected.add("63-3")  # move K+2 onto empty stack
+        self.assertEqual(expected, actual)
+
     def test_irange_forward(self):
         expected = [4, 5, 6, 7, 8, 9]
         actual = list(irange(4, 9))

@@ -5,6 +5,8 @@ from tuplestate import *
 
 @timebudget
 def get_draw_moves(state):
+    if len(state.stock) == 0 and len(state.waste) == 0:
+        return set()
     st = copy(state)
     draw_moves = set()
     top_cards = set()
