@@ -40,6 +40,7 @@ FND_SUITS = "CDSH"
 VALUE = 0  # the 0th index of a card string
 SUIT = 1  # the 1st index of a card string
 FNDS = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
+TABLEAUS = [TABLEAU1, TABLEAU2, TABLEAU3, TABLEAU4, TABLEAU5, TABLEAU6, TABLEAU7]
 VALUE_ORDER = set(
     [
         ("A", "2"),

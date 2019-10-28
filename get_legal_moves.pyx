@@ -22,17 +22,13 @@ def get_draw_moves(state):
     return draw_moves
 
 
-@timebudget
-def get_legal_moves(state):
-    """ returns a set of legal moves given the state """
-    moves = set()
-    TABLEAUS = irange(TABLEAU1, TABLEAU7)
+def tableau_to_tableau(state):
     FACEUP = {}
+    moves = set()
     for tab in TABLEAUS:
         pile = state[tab]
         fu = count_face_up(pile)
         FACEUP[tab] = pile[-fu:]
-    # tab to tab
     for src in TABLEAUS:
         for dest in TABLEAUS:
             if src == dest:
@@ -46,6 +42,15 @@ def get_legal_moves(state):
                         moves.add(move)
                 elif can_stack(src_card, state[dest][-1]):
                     moves.add(move)
+    return moves
+
+
+@timebudget
+def get_legal_moves(state):
+    """ returns a set of legal moves given the state """
+    moves = set()
+    # tab to tab
+    moves = moves.union(tableau_to_tableau(state))
     # tab to foundation
     for src in TABLEAUS:
         if len(state[src]) == 0:
