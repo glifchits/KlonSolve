@@ -1,4 +1,5 @@
 from tuplestate import *
+from get_legal_moves import get_legal_moves
 import unittest
 import json
 
