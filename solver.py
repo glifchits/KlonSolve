@@ -1,5 +1,6 @@
 import re
 import sys
+import time
 from tuplestate import *
 from get_legal_moves import get_legal_moves
 from timebudget import timebudget
@@ -102,22 +103,20 @@ def prioritize(move_list, state):
 visited = set()
 
 
-def gameplay(state, move_seq):
-    if state in visited:
-        return False
+def solve(state, move_seq):
     if state_is_win(state):
+        print("WIN")
+        print(move_seq)
         return True
+    elif state in visited:
+        return False
     visited.add(state)
-    moves = get_legal_moves(state)
-
-    for move_code in prioritize(moves, state):
-        new_state = play_move(state, move_code)
-        is_win_state = gameplay(state=new_state, move_seq=append(move_seq, move_code))
-        if is_win_state:
-            print("Win!!!")
-            # print(move_seq)
-            # pprint_st(new_state)
+    child_moves = prioritize(get_legal_moves(state), state)
+    for move_code in child_moves:
+        child_state = play_move(state, move_code)
+        if solve(child_state, append(move_seq, move_code)):
             return True
+    return False
 
 
 if __name__ == "__main__":
@@ -141,6 +140,8 @@ if __name__ == "__main__":
             ["5h", "6d", "5d", "4D"],
         ],
     }
-    ret = gameplay(state=init_from_ui_state(game), move_seq=())
-    print("result")
-    pprint(ret)
+    start = time.time()
+    ret = solve(init_from_ui_state(game), ())
+    end = time.time()
+    print(f"finished in {end-start:.2f} ms")
+    print(f"solved: {ret}")
