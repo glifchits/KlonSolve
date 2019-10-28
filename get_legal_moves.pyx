@@ -96,7 +96,7 @@ def get_legal_moves(state):
             else:
                 fnd_top = state[fnd][-1]
                 if src_top[SUIT] == fnd_top[SUIT]:
-                    ord = (src_top[VALUE], fnd_top[VALUE])
+                    ord = (fnd_top[VALUE], src_top[VALUE])
                     if ord in VALUE_ORDER:
                         moves.add(move)
     # waste to tableau

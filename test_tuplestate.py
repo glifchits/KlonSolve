@@ -420,6 +420,35 @@ class TestState(unittest.TestCase):
         expected.add("63-3")  # move K+2 onto empty stack
         self.assertEqual(expected, actual)
 
+    def test_endgame_2(self):
+        game = {
+            "foundation": [
+                ["AC", "2C", "3C", "4C", "5C", "6C", "7C", "8C", "9C", "10C", "JC"],
+                ["AD", "2D", "3D", "4D", "5D", "6D", "7D", "8D", "9D", "10D", "JD"],
+                ["AS", "2S", "3S", "4S", "5S", "6S", "7S", "8S", "9S", "10S", "JS"],
+                ["AH", "2H", "3H", "4H", "5H", "6H", "7H", "8H", "9H", "10H", "JH"],
+            ],
+            "waste": [],
+            "stock": [],
+            "tableau": [
+                ["KD", "QS"],
+                ["KH", "QC"],
+                [],
+                ["KC"],
+                ["QH"],
+                ["KS", "QD"],
+                [],
+            ],
+        }
+        state = init_from_ui_state(game)
+        # a sequence of moves I wrote, easy win. must be possible to make these moves
+        move_seq = ("5H", "6D", "2C", "1S", "1D", "2H", "4C", "6S")
+        for move_code in move_seq:
+            moves = get_legal_moves(state)
+            self.assertIn(move_code, moves)
+            state = play_move(state, move_code)
+        self.assertTrue(state_is_win(state))
+
     def test_irange_forward(self):
         expected = [4, 5, 6, 7, 8, 9]
         actual = list(irange(4, 9))
