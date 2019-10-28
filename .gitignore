@@ -1,3 +1,8 @@
 *.py[co]
 __pycache__
 *.ipynb_checkpoints
+
+### cython
+build
+*.c
+*.so

@@ -1,6 +1,7 @@
 import re
 import sys
 from tuplestate import *
+from get_legal_moves import get_legal_moves
 from timebudget import timebudget
 
 timebudget.report_atexit()
@@ -127,6 +128,7 @@ def gameplay(state, move_seq):
 
 
 if __name__ == "__main__":
+    print("running solver")
     game = {
         "foundation": [[], [], [], []],
         "waste": [],
