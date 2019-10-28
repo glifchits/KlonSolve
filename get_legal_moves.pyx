@@ -45,17 +45,19 @@ def tableau_to_tableau(state):
         for dest in range(1, 8):
             if src == dest:
                 continue
-            i = 0
+            num_to_move = 1
             faceup = FACEUP[src]
             idx = len(faceup) - 1
             while idx >= 0:
                 state_dest = state[dest]
                 src_card = faceup[idx]
                 if len(state_dest) == 0:  # tableau empty
-                    if src_card[VALUE] == "K":
+                    # only move a king to empty tableau if not the entire stack
+                    # this would be a useless move
+                    if src_card[VALUE] == "K" and len(state[src]) > num_to_move:
                         move = f"{src}{dest}"
-                        if i > 0:
-                            move += f"-{i+1}"
+                        if num_to_move > 1:
+                            move += f"-{num_to_move}"
                         moves.add(move)
                 else:
                     # elif can_stack(src_card, state[dest][-1]):
@@ -69,10 +71,10 @@ def tableau_to_tableau(state):
                     if (cs in RED and ds in BLACK) or (cs in BLACK and ds in RED):
                         if (cv, dv) in VALUE_ORDER:
                             move = f"{src}{dest}"
-                            if i > 0:
-                                move += f"-{i+1}"
+                            if num_to_move > 1:
+                                move += f"-{num_to_move}"
                             moves.add(move)
-                i += 1
+                num_to_move += 1
                 idx -= 1
     return moves
 

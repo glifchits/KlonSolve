@@ -407,17 +407,9 @@ class TestState(unittest.TestCase):
         expected = set()
         expected.add("56")  # move TD onto JS
         expected.add("62-2")  # move red Q onto K
-        expected.add("67-3")  # move stack to empty
         expected.add("H1")  # bring JH off foundation onto QS
-        expected.add("23")  # move K to empty stack
-        expected.add("17-2")  # move stack to empty
         expected.add("41-3")  # move red J+2 onto QS
-        expected.add("43-5")  # move stack to empty
         expected.add("S5")  # move 9S off foundation to TD
-        expected.add("27")  # move K to empty stack
-        expected.add("13-2")  # move K+1 to empty stack
-        expected.add("47-5")  # move K+4 onto empty stack
-        expected.add("63-3")  # move K+2 onto empty stack
         self.assertEqual(expected, actual)
 
     def test_endgame_2(self):
