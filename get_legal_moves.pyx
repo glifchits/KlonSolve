@@ -1,3 +1,4 @@
+cimport cython
 from timebudget import timebudget
 from tuplestate import *
 
@@ -22,26 +23,55 @@ def get_draw_moves(state):
     return draw_moves
 
 
+@cython.boundscheck(False)
+# @cython.wraparound(False) # causes segfaults
+@timebudget
 def tableau_to_tableau(state):
+    # TABLEAU1 = 1 and TABLEAU7 = 7
+    # range(1, 8) is all tableau indices
     FACEUP = {}
+    RED = "DH"
+    BLACK = "CS"
+    VALUE = 0
+    SUIT = 1
     moves = set()
-    for tab in TABLEAUS:
+    for tab in range(1, 8):
         pile = state[tab]
         fu = count_face_up(pile)
         FACEUP[tab] = pile[-fu:]
-    for src in TABLEAUS:
-        for dest in TABLEAUS:
+    for src in range(1, 8):
+        for dest in range(1, 8):
             if src == dest:
                 continue
-            for i, src_card in enumerate(reversed(FACEUP[src])):
-                move = f"{src}{dest}"
-                if i > 0:
-                    move += f"-{i+1}"
-                if len(state[dest]) == 0:  # tableau empty
+            i = 0
+            faceup = FACEUP[src]
+            idx = len(faceup) - 1
+            while idx >= 0:
+                state_dest = state[dest]
+                src_card = faceup[idx]
+                if len(state_dest) == 0:  # tableau empty
                     if src_card[VALUE] == "K":
+                        move = f"{src}{dest}"
+                        if i > 0:
+                            move += f"-{i+1}"
                         moves.add(move)
-                elif can_stack(src_card, state[dest][-1]):
-                    moves.add(move)
+                else:
+                    # elif can_stack(src_card, state[dest][-1]):
+                    c = src_card
+                    d = state_dest[-1]
+                    cs = c[SUIT]
+                    cv = c[VALUE]
+                    ds = d[SUIT]
+                    dv = d[VALUE]
+
+                    if (cs in RED and ds in BLACK) or (cs in BLACK and ds in RED):
+                        if (cv, dv) in VALUE_ORDER:
+                            move = f"{src}{dest}"
+                            if i > 0:
+                                move += f"-{i+1}"
+                            moves.add(move)
+                i += 1
+                idx -= 1
     return moves
 
 
