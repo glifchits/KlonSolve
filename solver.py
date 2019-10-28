@@ -106,7 +106,7 @@ visited = set()
 def solve(state, move_seq):
     if state_is_win(state):
         print("WIN")
-        print(move_seq)
+        print(list(move_seq))
         return True
     elif state in visited:
         return False
