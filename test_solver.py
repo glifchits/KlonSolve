@@ -15,6 +15,25 @@ class TestSolver(unittest.TestCase):
         self.assertIsNone(build2suit.match("x2C"))
         self.assertIsNone(build2suit.match("2Cx"))
 
+    def test_build2build_regex(self):
+        self.assertIsNotNone(build2build.match("12"))
+        self.assertIsNotNone(build2build.match("36"))
+        self.assertIsNotNone(build2build.match("37"))
+        self.assertIsNotNone(build2build.match("37-2"))
+        self.assertIsNotNone(build2build.match("71"))
+        self.assertIsNotNone(build2build.match("53"))
+        self.assertIsNotNone(build2build.match("53-3"))
+        self.assertIsNone(build2build.match("01"))
+        self.assertIsNone(build2build.match("53-"))
+        self.assertIsNone(build2build.match("81"))
+        self.assertIsNone(build2build.match("W1"))
+        self.assertIsNone(build2build.match("2S"))
+        self.assertIsNone(build2build.match("D1"))
+        self.assertIsNone(build2build.match("DR1"))
+        self.assertIsNone(build2build.match("C6"))
+        self.assertIsNone(build2build.match("x71"))
+        self.assertIsNone(build2build.match("71x"))
+
     def test_talon2build_regex(self):
         self.assertIsNotNone(talon2build.match("W1"))
         self.assertIsNotNone(talon2build.match("W7"))
