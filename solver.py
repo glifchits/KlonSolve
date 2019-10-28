@@ -10,14 +10,6 @@ timebudget.report_atexit()
 sys.setrecursionlimit(10 ** 6)
 
 
-def add(my_frozenset, new_value):
-    return my_frozenset.union(set([new_value]))
-
-
-def visit_state(visit_set, state):
-    return add(visit_set, hash(state))
-
-
 def was_visited(state, visited):
     return hash(state) in visited
 
@@ -111,61 +103,44 @@ visited = set()
 
 
 def gameplay(state, move_seq):
-    if was_visited(state, visited):
+    if state in visited:
         return False
     if state_is_win(state):
         return True
-    visited.add(hash(state))
+    visited.add(state)
     moves = get_legal_moves(state)
 
     for move_code in prioritize(moves, state):
         new_state = play_move(state, move_code)
-        is_a_win_state = gameplay(state=new_state, move_seq=append(move_seq, move_code))
-        if is_a_win_state:
-            print("WIN!!!!")
-            pprint_st(new_state)
-            return new_state
+        is_win_state = gameplay(state=new_state, move_seq=append(move_seq, move_code))
+        if is_win_state:
+            print("Win!!!")
+            # print(move_seq)
+            # pprint_st(new_state)
+            return True
 
 
 if __name__ == "__main__":
     print("running solver")
     game = {
-        "foundation": [[], [], [], []],
-        "waste": [],
-        "stock": [
-            "kc",
-            "9c",
-            "qc",
-            "8c",
-            "3c",
-            "7s",
-            "7h",
-            "10c",
-            "4c",
-            "7d",
-            "ks",
-            "ad",
-            "qs",
-            "kh",
-            "qd",
-            "10h",
-            "8s",
-            "ah",
-            "6h",
-            "4h",
-            "as",
-            "2d",
-            "10d",
-            "3h",
+        "foundation": [
+            ["AC", "2C", "3C", "4C", "5C", "6C"],
+            ["AD", "2D"],
+            ["AS", "2S", "3S", "4S"],
+            ["AH", "2H", "3H", "4H"],
         ],
+        "waste": [],
+        "stock": ["kc", "9c", "qc", "7s", "7h", "kh"],
         "tableau": [
-            ["8H"],
-            ["3d", "6C"],
-            ["5s", "jd", "JS"],
-            ["2h", "kd", "7c", "9S"],
-            ["qh", "8d", "jc", "2c", "AC"],
-            ["4s", "6s", "2s", "3s", "9d", "5C"],
-            ["5h", "6d", "5d", "4d", "10s", "9h", "JH"],
+            ["KD", "QS", "JH", "10C", "9H", "8C", "7D", "6S"],
+            ["3D"],
+            ["5s", "JD", "10S", "9D", "8S"],
+            [],
+            ["qh", "8d", "JC", "10D"],
+            ["KS", "QD", "JS", "10H", "9S", "8H", "7C", "6H"],
+            ["5h", "6d", "5d", "4D"],
         ],
     }
-    gameplay(state=init_from_ui_state(game), move_seq=())
+    ret = gameplay(state=init_from_ui_state(game), move_seq=())
+    print("result")
+    pprint(ret)
