@@ -1,5 +1,6 @@
 from collections import namedtuple
 from pprint import pprint
+from timebudget import timebudget
 
 
 KlonState = namedtuple(
@@ -126,12 +127,14 @@ def init_from_solvitaire(game_dict):
     )
 
 
+@timebudget
 def last_face_up(pile):
     if len(pile) == 0:
         return pile
     return pile[:-1] + (pile[-1].upper(),)
 
 
+@timebudget
 def move(state, src_pile, dest_pile, cards=1):
     new_src = last_face_up(state[src_pile][:-cards])
     new_dest = state[dest_pile] + state[src_pile][-cards:]
@@ -141,6 +144,7 @@ def move(state, src_pile, dest_pile, cards=1):
     return KlonState(*new_state)
 
 
+@timebudget
 def draw(state):
     new_waste = state[WASTE]
     new_stock = state[STOCK]
@@ -158,6 +162,7 @@ def copy(state):
     return KlonState(*state)
 
 
+@timebudget
 def replace_stock(state):
     new_waste = ()
     new_stock = tuple(reversed(state[WASTE]))  # reverse the waste pile
@@ -181,6 +186,7 @@ def count_face_up(pile):
     return len(pile)  # (== i+1) all cards are face up
 
 
+@timebudget
 def can_stack(card, onto):
     """ `card` is the card to move, `onto` is the card to stack onto """
     RED = "DH"
@@ -192,6 +198,7 @@ def can_stack(card, onto):
     return (card[VALUE], onto[VALUE]) in VALUE_ORDER
 
 
+@timebudget
 def get_draw_moves(state):
     st = copy(state)
     draw_moves = set()
@@ -211,6 +218,7 @@ def get_draw_moves(state):
     return draw_moves
 
 
+@timebudget
 def get_legal_moves(state):
     """ returns a set of legal moves given the state """
     moves = set()
@@ -332,6 +340,7 @@ def init_from_dict(game):
     )
 
 
+@timebudget
 def state_is_win(state):
     cards = "A23456789TJQK"
     if len(state.stock) != 0:

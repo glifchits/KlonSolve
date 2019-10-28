@@ -1,6 +1,9 @@
 import re
 import sys
 from tuplestate import *
+from timebudget import timebudget
+
+timebudget.report_atexit()
 
 
 sys.setrecursionlimit(10 ** 6)
@@ -29,6 +32,7 @@ suit2build = re.compile(r"^([CDSH])([1-7])$")
 drawmove = re.compile(r"^DR([1-9][0-9]?)$")
 
 
+@timebudget
 def prioritize(move_list, state):
     """re-order the given move list by how
     promising the moves are, descending """
