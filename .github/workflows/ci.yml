@@ -1,4 +1,4 @@
-name: KlonSolve
+name: tests
 
 on: [push]
 
