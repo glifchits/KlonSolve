@@ -1,3 +1,4 @@
+import re
 import subprocess
 from pprint import pprint
 
@@ -25,4 +26,42 @@ def convert_shootme_to_solvitaire_json(sm_out):
     return {
         "tableau piles": list(map(tableau_pile, tab_lines)),
         "stock": list(reversed(stock_line.split())),
+    }
+
+
+took_time = re.compile(r".* Took (\d+) ms.$")
+win_result = re.compile(r"Minimal solution in (\d+) moves. Took (\d+) ms.")
+
+
+def parse_winnable(ret):
+    lines = ret.splitlines()
+    solution_result = lines[15]
+    moveseq = lines[-2]
+    deck = "\n".join(lines[:13])
+    move_count, ms = map(int, win_result.match(solution_result).groups())
+    return {
+        "solved": True,
+        "impossible": False,
+        "unknown": False,
+        "move_count": move_count,
+        "time_ms": ms,
+        "result": solution_result,
+        "moves": moveseq,
+        "deck": deck,
+    }
+
+
+def parse_impossible(ret):
+    lines = ret.splitlines()
+    solution_result = lines[15]
+    moveseq = lines[-2]
+    deck = "\n".join(lines[:13])
+    ms = int(took_time.match(solution_result).groups()[0])
+    return {
+        "solved": False,
+        "impossible": True,
+        "unknown": False,
+        "time_ms": ms,
+        "result": solution_result,
+        "deck": deck,
     }

@@ -203,10 +203,10 @@ def to_dict(state):
     TABLEAU = [TABLEAU1, TABLEAU2, TABLEAU3, TABLEAU4, TABLEAU5, TABLEAU6, TABLEAU7]
     FND = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
     return {
-        "stock": state.stock,
-        "waste": state.waste,
-        "tableau": list(map(lambda t: state[t], TABLEAU)),
-        "foundations": list(map(lambda f: state[f], FND)),
+        "stock": list(state.stock),
+        "waste": list(state.waste),
+        "tableau": list(map(lambda t: list(state[t]), TABLEAU)),
+        "foundation": list(map(lambda f: list(state[f]), FND)),
     }
 
 
@@ -218,19 +218,19 @@ def init_from_dict(game):
     tableau = game["tableau"]
     foundation = game["foundations"]
     return KlonState(
-        stock=game["stock"],
-        waste=game["waste"],
-        tableau1=tableau[0],
-        tableau2=tableau[1],
-        tableau3=tableau[2],
-        tableau4=tableau[3],
-        tableau5=tableau[4],
-        tableau6=tableau[5],
-        tableau7=tableau[6],
-        foundation1=foundation[0],
-        foundation2=foundation[1],
-        foundation3=foundation[2],
-        foundation4=foundation[3],
+        stock=tuple(game["stock"]),
+        waste=tuple(game["waste"]),
+        tableau1=tuple(tableau[0]),
+        tableau2=tuple(tableau[1]),
+        tableau3=tuple(tableau[2]),
+        tableau4=tuple(tableau[3]),
+        tableau5=tuple(tableau[4]),
+        tableau6=tuple(tableau[5]),
+        tableau7=tuple(tableau[6]),
+        foundation1=tuple(foundation[0]),
+        foundation2=tuple(foundation[1]),
+        foundation3=tuple(foundation[2]),
+        foundation4=tuple(foundation[3]),
     )
 
 
