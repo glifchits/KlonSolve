@@ -1,3 +1,5 @@
 Cython==0.29.6
 timebudget==0.6
 timeout-decorator==0.4.1
+pytest==5.2.2
+flaky==3.6.1

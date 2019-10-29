@@ -5,8 +5,6 @@ from get_legal_moves import get_legal_moves
 from timebudget import timebudget
 from policies import yan_et_al
 
-timebudget.report_atexit()
-
 
 sys.setrecursionlimit(10 ** 6)
 
@@ -37,10 +35,7 @@ def get_actions(state, move_seq):
     return sorted(move_list, key=policy, reverse=True)
 
 
-visited = set()
-
-
-def solve(state, move_seq):
+def solve_aux(state, move_seq, visited):
     if state_is_win(state):
         return True
     elif state in visited:
@@ -49,6 +44,13 @@ def solve(state, move_seq):
     child_moves = get_actions(state, move_seq)
     for move_code in child_moves:
         child_state = play_move(state, move_code)
-        if solve(child_state, append(move_seq, move_code)):
+        new_moveseq = append(move_seq, move_code)
+        if solve_aux(child_state, new_moveseq, visited):
             return move_seq
     return False
+
+
+def solve(state):
+    visited = set()
+    move_seq = ()
+    return solve_aux(state, move_seq, visited)

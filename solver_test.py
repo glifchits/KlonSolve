@@ -1,17 +1,19 @@
 import unittest
 import timeout_decorator
+from flaky import flaky
 from timeout_decorator import TimeoutError
 from solver import solve
 from tuplestate import init_from_ui_state
 
 
-@timeout_decorator.timeout(2)
-def solve_under_2sec(initial_state):
-    solution = solve(initial_state, ())
+@timeout_decorator.timeout(1)
+def solve_under_1sec(initial_state):
+    solution = solve(initial_state)
     return solution
 
 
 class TestSolver(unittest.TestCase):
+    @flaky(max_runs=5, min_passes=2)
     def test_a_game(self):
         game = {
             "foundation": [[], [], [], []],
@@ -53,7 +55,7 @@ class TestSolver(unittest.TestCase):
             ],
         }
         state = init_from_ui_state(game)
-        solution = solve_under_2sec(state)
+        solution = solve_under_1sec(state)
         self.assertNotEqual(solution, None, "timed out, or erroneously returned None")
         self.assertNotEqual(solution, False, "game incorrectly deemed unsolvable")
 
