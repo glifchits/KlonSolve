@@ -55,7 +55,10 @@ class TestSolver(unittest.TestCase):
             ],
         }
         state = init_from_ui_state(game)
-        solution = solve_under_1sec(state)
+        try:
+            solution = solve_under_1sec(state)
+        except TimeoutError:
+            self.fail("Received TimeoutError, did not solve in time")
         self.assertNotEqual(solution, None, "timed out, or erroneously returned None")
         self.assertNotEqual(solution, False, "game incorrectly deemed unsolvable")
 
