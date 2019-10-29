@@ -1,3 +1,5 @@
+import os
+import pytest
 import unittest
 import timeout_decorator
 from flaky import flaky
@@ -12,6 +14,7 @@ def solve_under_2sec(initial_state):
     return solution
 
 
+@pytest.mark.skipif(os.environ.get("GITHUB_ACTION") != None, reason="In CI environment")
 class TestSolver(unittest.TestCase):
     @flaky(max_runs=5, min_passes=2)
     def test_a_game(self):
