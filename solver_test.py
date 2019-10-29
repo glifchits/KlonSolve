@@ -6,8 +6,8 @@ from solver import solve
 from tuplestate import init_from_ui_state
 
 
-@timeout_decorator.timeout(1)
-def solve_under_1sec(initial_state):
+@timeout_decorator.timeout(2)
+def solve_under_2sec(initial_state):
     solution = solve(initial_state)
     return solution
 
@@ -56,7 +56,7 @@ class TestSolver(unittest.TestCase):
         }
         state = init_from_ui_state(game)
         try:
-            solution = solve_under_1sec(state)
+            solution = solve_under_2sec(state)
         except TimeoutError:
             self.fail("Received TimeoutError, did not solve in time")
         self.assertNotEqual(solution, None, "timed out, or erroneously returned None")
