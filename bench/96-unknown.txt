@@ -1,0 +1,17 @@
+ 0: 
+ 1: 2S 
+ 2: 3S -3C
+ 3: 3D -KD-6D
+ 4: JH -TC-9S-2H
+ 5: QC -TS-JD-4S-2D
+ 6: 7S -JS-QH-4H-5S-QD
+ 7: 9H -TD-5D-8S-5H-AD-AC
+ 8: 7D 7C TH 6S 3H AH 8D KH 5C 6C 8H 8C 9C 4D 6H KC 7H AS 9D KS 2C JC 4C QS 
+ 9: 
+10: 
+11: 
+12: 
+Minimum Moves Needed: 90
+
+Unknown. Max cards in foundation 7 at 51 moves. Took 76718013 ms.
+
