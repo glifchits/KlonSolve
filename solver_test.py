@@ -1,17 +1,46 @@
 import os
 import pytest
 import unittest
-import timeout_decorator
 from flaky import flaky
-from timeout_decorator import TimeoutError
+from timeout_decorator import timeout, TimeoutError
 from solver import solve
-from tuplestate import init_from_ui_state
+from tuplestate import (
+    init_from_ui_state,
+    init_from_solvitaire,
+    state_is_win,
+    copy,
+    play_move,
+)
+from benchmarking import convert_shootme_to_solvitaire_json
 
 
-@timeout_decorator.timeout(2)
-def solve_under_2sec(initial_state):
+TIMEOUT = "TIMEOUT"
+
+
+@timeout(1)
+def solve_under_1sec(initial_state):
     solution = solve(initial_state)
     return solution
+
+
+def quick_solve(state, attempts=5):
+    while attempts > 0:
+        try:
+            return solve_under_1sec(state)
+        except TimeoutError:
+            pass
+        except AssertionError:
+            pass
+        finally:
+            attempts -= 1
+    return TIMEOUT
+
+
+def validate_move_seq(state, move_seq):
+    state = copy(state)
+    for move in move_seq:
+        state = play_move(state, move)
+    return state_is_win(state)
 
 
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTION") != None, reason="In CI environment")
@@ -58,12 +87,21 @@ class TestSolver(unittest.TestCase):
             ],
         }
         state = init_from_ui_state(game)
-        try:
-            solution = solve_under_2sec(state)
-        except TimeoutError:
-            self.fail("Received TimeoutError, did not solve in time")
-        self.assertNotEqual(solution, None, "timed out, or erroneously returned None")
+        solution = quick_solve(state)
+        self.assertNotEqual(solution, TIMEOUT, "timed out")
         self.assertNotEqual(solution, False, "game incorrectly deemed unsolvable")
+        self.assertTrue(validate_move_seq(state, solution))
+
+    @flaky(max_runs=5, min_passes=2)
+    def test_seed_47(self):
+        with open("./bench/47-solvedmin.txt") as f:
+            ret = f.read()
+        deck_json = convert_shootme_to_solvitaire_json(ret)
+        state = init_from_solvitaire(deck_json)
+        solution = quick_solve(state)
+        self.assertNotEqual(solution, TIMEOUT)
+        self.assertNotEqual(solution, False)
+        self.assertTrue(validate_move_seq(state, solution))
 
 
 if __name__ == "__main__":

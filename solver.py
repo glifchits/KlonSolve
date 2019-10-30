@@ -37,7 +37,7 @@ def get_actions(state, move_seq):
 
 def solve_aux(state, move_seq, visited):
     if state_is_win(state):
-        return True
+        return move_seq
     elif state in visited:
         return False
     visited.add(state)
@@ -45,8 +45,9 @@ def solve_aux(state, move_seq, visited):
     for move_code in child_moves:
         child_state = play_move(state, move_code)
         new_moveseq = append(move_seq, move_code)
-        if solve_aux(child_state, new_moveseq, visited):
-            return move_seq
+        ret = solve_aux(child_state, new_moveseq, visited)
+        if ret:
+            return ret
     return False
 
 
@@ -54,3 +55,17 @@ def solve(state):
     visited = set()
     move_seq = ()
     return solve_aux(state, move_seq, visited)
+
+
+if __name__ == "__main__":
+    from benchmarking import convert_shootme_to_solvitaire_json
+
+    timebudget.report_atexit()
+
+    with open("./bench/47-solvedmin.txt") as f:
+        ret = f.read()
+    deck_json = convert_shootme_to_solvitaire_json(ret)
+    state = init_from_solvitaire(deck_json)
+    solution = solve(state)
+    if solution:
+        print(list(solution))
