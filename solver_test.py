@@ -45,7 +45,7 @@ def validate_move_seq(state, move_seq):
 
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTION") != None, reason="In CI environment")
 class TestSolver(unittest.TestCase):
-    @flaky(max_runs=5, min_passes=2)
+    @flaky(max_runs=10, min_passes=2)
     def test_a_game(self):
         game = {
             "foundation": [[], [], [], []],
@@ -92,9 +92,9 @@ class TestSolver(unittest.TestCase):
         self.assertNotEqual(solution, False, "game incorrectly deemed unsolvable")
         self.assertTrue(validate_move_seq(state, solution))
 
-    @flaky(max_runs=5, min_passes=2)
+    @flaky(max_runs=10, min_passes=2)
     def test_seed_47(self):
-        with open("./bench/47-solvedmin.txt") as f:
+        with open("./fixtures/shootme/solvedmin/47.txt") as f:
             ret = f.read()
         deck_json = convert_shootme_to_solvitaire_json(ret)
         state = init_from_solvitaire(deck_json)

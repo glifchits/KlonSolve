@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     timebudget.report_atexit()
 
-    with open("./bench/47-solvedmin.txt") as f:
+    with open("./fixtures/shootme/solvedmin/47.txt") as f:
         ret = f.read()
     deck_json = convert_shootme_to_solvitaire_json(ret)
     state = init_from_solvitaire(deck_json)
