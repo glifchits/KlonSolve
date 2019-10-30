@@ -1,0 +1,1441 @@
+ 0: 
+ 1: 4H 
+ 2: AH -TH
+ 3: 5S -8S-4S
+ 4: 9D -QH-4D-QD
+ 5: 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: 9S 3S KC JD 7C 5D JH 9H KS 5C 5H 6C 4C 7H AS KD 7S 8C KH 6H 7D 8D AC TS 
+ 9: 
+10: 
+11: 
+12: 
+Minimum Moves Needed: 87
+
+Minimal solution in 121 moves. Took 3079815 ms.
+----------------------------------------
+Move AH from tableau 2 on to foundation and flip tableau 2
+
+ 0: 
+ 1: 4H 
+ 2: TH 
+ 3: 5S -8S-4S
+ 4: 9D -QH-4D-QD
+ 5: 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: 9S 3S KC JD 7C 5D JH 9H KS 5C 5H 6C 4C 7H AS KD 7S 8C KH 6H 7D 8D AC TS 
+ 9: 
+10: 
+11: 
+12: AH 
+Minimum Moves Needed: 85
+
+----------------------------------------
+Move 4H from tableau 1 on to tableau 3
+
+ 0: 
+ 1: 
+ 2: TH 
+ 3: 4H 5S -8S-4S
+ 4: 9D -QH-4D-QD
+ 5: 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: 9S 3S KC JD 7C 5D JH 9H KS 5C 5H 6C 4C 7H AS KD 7S 8C KH 6H 7D 8D AC TS 
+ 9: 
+10: 
+11: 
+12: AH 
+Minimum Moves Needed: 85
+
+----------------------------------------
+Draw 1 time and move KC from waste on to tableau 1
+
+ 0: 3S 9S 
+ 1: KC 
+ 2: TH 
+ 3: 4H 5S -8S-4S
+ 4: 9D -QH-4D-QD
+ 5: 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: JD 7C 5D JH 9H KS 5C 5H 6C 4C 7H AS KD 7S 8C KH 6H 7D 8D AC TS 
+ 9: 
+10: 
+11: 
+12: AH 
+Minimum Moves Needed: 84
+
+----------------------------------------
+Move 3S from waste on to tableau 3
+
+ 0: 9S 
+ 1: KC 
+ 2: TH 
+ 3: 3S 4H 5S -8S-4S
+ 4: 9D -QH-4D-QD
+ 5: 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: JD 7C 5D JH 9H KS 5C 5H 6C 4C 7H AS KD 7S 8C KH 6H 7D 8D AC TS 
+ 9: 
+10: 
+11: 
+12: AH 
+Minimum Moves Needed: 84
+
+----------------------------------------
+Move 9S from waste on to tableau 2
+
+ 0: 
+ 1: KC 
+ 2: 9S TH 
+ 3: 3S 4H 5S -8S-4S
+ 4: 9D -QH-4D-QD
+ 5: 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: JD 7C 5D JH 9H KS 5C 5H 6C 4C 7H AS KD 7S 8C KH 6H 7D 8D AC TS 
+ 9: 
+10: 
+11: 
+12: AH 
+Minimum Moves Needed: 84
+
+----------------------------------------
+Draw 4 times and move AS from waste on to foundation
+
+ 0: 7H 4C 6C 5H 5C KS 9H JH 5D 7C JD 
+ 1: KC 
+ 2: 9S TH 
+ 3: 3S 4H 5S -8S-4S
+ 4: 9D -QH-4D-QD
+ 5: 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: KD 7S 8C KH 6H 7D 8D AC TS 
+ 9: 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 81
+
+----------------------------------------
+Move 3 cards from tableau 3 on to tableau 5 and flip tableau 3
+
+ 0: 7H 4C 6C 5H 5C KS 9H JH 5D 7C JD 
+ 1: KC 
+ 2: 9S TH 
+ 3: 8S -4S
+ 4: 9D -QH-4D-QD
+ 5: 3S 4H 5S 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: KD 7S 8C KH 6H 7D 8D AC TS 
+ 9: 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 80
+
+----------------------------------------
+Draw 2 times and move 7D from waste on to tableau 3
+
+ 0: 6H KH 8C 7S KD 7H 4C 6C 5H 5C KS 9H JH 5D 7C JD 
+ 1: KC 
+ 2: 9S TH 
+ 3: 7D 8S -4S
+ 4: 9D -QH-4D-QD
+ 5: 3S 4H 5S 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: 8D AC TS 
+ 9: 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 82
+
+----------------------------------------
+Draw 4 times and move 6C from waste on to tableau 3
+
+ 0: 5H 5C KS 9H JH 5D 7C JD 
+ 1: KC 
+ 2: 9S TH 
+ 3: 6C 7D 8S -4S
+ 4: 9D -QH-4D-QD
+ 5: 3S 4H 5S 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: 4C 7H KD 7S 8C KH 6H 8D AC TS 
+ 9: 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 79
+
+----------------------------------------
+Draw 3 times and move AC from waste on to foundation
+
+ 0: 8D 6H KH 8C 7S KD 7H 4C 5H 5C KS 9H JH 5D 7C JD 
+ 1: KC 
+ 2: 9S TH 
+ 3: 6C 7D 8S -4S
+ 4: 9D -QH-4D-QD
+ 5: 3S 4H 5S 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: TS 
+ 9: AC 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 81
+
+----------------------------------------
+Move 8D from waste on to tableau 2
+
+ 0: 6H KH 8C 7S KD 7H 4C 5H 5C KS 9H JH 5D 7C JD 
+ 1: KC 
+ 2: 8D 9S TH 
+ 3: 6C 7D 8S -4S
+ 4: 9D -QH-4D-QD
+ 5: 3S 4H 5S 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: TS 
+ 9: AC 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 80
+
+----------------------------------------
+Draw 2 times and move 5D from waste on to tableau 3
+
+ 0: 7C JD 
+ 1: KC 
+ 2: 8D 9S TH 
+ 3: 5D 6C 7D 8S -4S
+ 4: 9D -QH-4D-QD
+ 5: 3S 4H 5S 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: AC 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 79
+
+----------------------------------------
+Move 7C from waste on to tableau 2
+
+ 0: JD 
+ 1: KC 
+ 2: 7C 8D 9S TH 
+ 3: 5D 6C 7D 8S -4S
+ 4: 9D -QH-4D-QD
+ 5: 3S 4H 5S 6D -TC-TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: AC 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 79
+
+----------------------------------------
+Move 4 cards from tableau 5 on to tableau 2 and flip tableau 5
+
+ 0: JD 
+ 1: KC 
+ 2: 3S 4H 5S 6D 7C 8D 9S TH 
+ 3: 5D 6C 7D 8S -4S
+ 4: 9D -QH-4D-QD
+ 5: TC -TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: AC 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 78
+
+----------------------------------------
+Move 9D from tableau 4 on to tableau 5 and flip tableau 4
+
+ 0: JD 
+ 1: KC 
+ 2: 3S 4H 5S 6D 7C 8D 9S TH 
+ 3: 5D 6C 7D 8S -4S
+ 4: QH -4D-QD
+ 5: 9D TC -TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: AC 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 76
+
+----------------------------------------
+Move 4 cards from tableau 3 on to tableau 5 and flip tableau 3
+
+ 0: JD 
+ 1: KC 
+ 2: 3S 4H 5S 6D 7C 8D 9S TH 
+ 3: 4S 
+ 4: QH -4D-QD
+ 5: 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: AC 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 74
+
+----------------------------------------
+Move QH from tableau 4 on to tableau 1 and flip tableau 4
+
+ 0: JD 
+ 1: QH KC 
+ 2: 3S 4H 5S 6D 7C 8D 9S TH 
+ 3: 4S 
+ 4: 4D -QD
+ 5: 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3C -3H-2D-2S-2C-3D-2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: AC 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 73
+
+----------------------------------------
+Move 3C from tableau 7 on to tableau 4 and flip tableau 7
+
+ 0: JD 
+ 1: QH KC 
+ 2: 3S 4H 5S 6D 7C 8D 9S TH 
+ 3: 4S 
+ 4: 3C 4D -QD
+ 5: 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3H -2D-2S-2C-3D-2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: AC 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 71
+
+----------------------------------------
+Move 3H from tableau 7 on to tableau 3 and flip tableau 7
+
+ 0: JD 
+ 1: QH KC 
+ 2: 3S 4H 5S 6D 7C 8D 9S TH 
+ 3: 3H 4S 
+ 4: 3C 4D -QD
+ 5: 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 2D -2S-2C-3D-2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: AC 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 69
+
+----------------------------------------
+Move 2D from tableau 7 on to tableau 4 and flip tableau 7
+
+ 0: JD 
+ 1: QH KC 
+ 2: 3S 4H 5S 6D 7C 8D 9S TH 
+ 3: 3H 4S 
+ 4: 2D 3C 4D -QD
+ 5: 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 2S -2C-3D-2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: AC 
+10: 
+11: AS 
+12: AH 
+Minimum Moves Needed: 68
+
+----------------------------------------
+Move 2S from tableau 7 on to foundation and flip tableau 7
+
+ 0: JD 
+ 1: QH KC 
+ 2: 3S 4H 5S 6D 7C 8D 9S TH 
+ 3: 3H 4S 
+ 4: 2D 3C 4D -QD
+ 5: 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 2C -3D-2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: AC 
+10: 
+11: 2S AS 
+12: AH 
+Minimum Moves Needed: 66
+
+----------------------------------------
+Move 2C from tableau 7 on to foundation and flip tableau 7
+
+ 0: JD 
+ 1: QH KC 
+ 2: 3S 4H 5S 6D 7C 8D 9S TH 
+ 3: 3H 4S 
+ 4: 2D 3C 4D -QD
+ 5: 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3D -2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: 2C AC 
+10: 
+11: 2S AS 
+12: AH 
+Minimum Moves Needed: 64
+
+----------------------------------------
+Move 3S from tableau 2 on to foundation
+
+ 0: JD 
+ 1: QH KC 
+ 2: 4H 5S 6D 7C 8D 9S TH 
+ 3: 3H 4S 
+ 4: 2D 3C 4D -QD
+ 5: 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: QS -6S-9C-JS-8H-QC
+ 7: 3D -2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: 2C AC 
+10: 
+11: 3S 2S AS 
+12: AH 
+Minimum Moves Needed: 63
+
+----------------------------------------
+Move JD from waste on to tableau 6
+
+ 0: 
+ 1: QH KC 
+ 2: 4H 5S 6D 7C 8D 9S TH 
+ 3: 3H 4S 
+ 4: 2D 3C 4D -QD
+ 5: 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: JD QS -6S-9C-JS-8H-QC
+ 7: 3D -2H
+ 8: JH 9H KS 5C 5H 4C 7H KD 7S 8C KH 6H TS 
+ 9: 2C AC 
+10: 
+11: 3S 2S AS 
+12: AH 
+Minimum Moves Needed: 63
+
+----------------------------------------
+Draw 2 times and move 4C from waste on to tableau 5
+
+ 0: 5H 5C KS 9H JH 
+ 1: QH KC 
+ 2: 4H 5S 6D 7C 8D 9S TH 
+ 3: 3H 4S 
+ 4: 2D 3C 4D -QD
+ 5: 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: JD QS -6S-9C-JS-8H-QC
+ 7: 3D -2H
+ 8: 7H KD 7S 8C KH 6H TS 
+ 9: 2C AC 
+10: 
+11: 3S 2S AS 
+12: AH 
+Minimum Moves Needed: 61
+
+----------------------------------------
+Move 3D from tableau 7 on to tableau 5 and flip tableau 7
+
+ 0: 5H 5C KS 9H JH 
+ 1: QH KC 
+ 2: 4H 5S 6D 7C 8D 9S TH 
+ 3: 3H 4S 
+ 4: 2D 3C 4D -QD
+ 5: 3D 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: JD QS -6S-9C-JS-8H-QC
+ 7: 2H 
+ 8: 7H KD 7S 8C KH 6H TS 
+ 9: 2C AC 
+10: 
+11: 3S 2S AS 
+12: AH 
+Minimum Moves Needed: 60
+
+----------------------------------------
+Move 2H from tableau 7 on to foundation
+
+ 0: 5H 5C KS 9H JH 
+ 1: QH KC 
+ 2: 4H 5S 6D 7C 8D 9S TH 
+ 3: 3H 4S 
+ 4: 2D 3C 4D -QD
+ 5: 3D 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: JD QS -6S-9C-JS-8H-QC
+ 7: 
+ 8: 7H KD 7S 8C KH 6H TS 
+ 9: 2C AC 
+10: 
+11: 3S 2S AS 
+12: 2H AH 
+Minimum Moves Needed: 59
+
+----------------------------------------
+Move 3H from tableau 3 on to foundation
+
+ 0: 5H 5C KS 9H JH 
+ 1: QH KC 
+ 2: 4H 5S 6D 7C 8D 9S TH 
+ 3: 4S 
+ 4: 2D 3C 4D -QD
+ 5: 3D 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: JD QS -6S-9C-JS-8H-QC
+ 7: 
+ 8: 7H KD 7S 8C KH 6H TS 
+ 9: 2C AC 
+10: 
+11: 3S 2S AS 
+12: 3H 2H AH 
+Minimum Moves Needed: 58
+
+----------------------------------------
+Move 4S from tableau 3 on to foundation
+
+ 0: 5H 5C KS 9H JH 
+ 1: QH KC 
+ 2: 4H 5S 6D 7C 8D 9S TH 
+ 3: 
+ 4: 2D 3C 4D -QD
+ 5: 3D 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: JD QS -6S-9C-JS-8H-QC
+ 7: 
+ 8: 7H KD 7S 8C KH 6H TS 
+ 9: 2C AC 
+10: 
+11: 4S 3S 2S AS 
+12: 3H 2H AH 
+Minimum Moves Needed: 57
+
+----------------------------------------
+Move 4H from tableau 2 on to foundation
+
+ 0: 5H 5C KS 9H JH 
+ 1: QH KC 
+ 2: 5S 6D 7C 8D 9S TH 
+ 3: 
+ 4: 2D 3C 4D -QD
+ 5: 3D 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: JD QS -6S-9C-JS-8H-QC
+ 7: 
+ 8: 7H KD 7S 8C KH 6H TS 
+ 9: 2C AC 
+10: 
+11: 4S 3S 2S AS 
+12: 4H 3H 2H AH 
+Minimum Moves Needed: 56
+
+----------------------------------------
+Move 5H from waste on to foundation
+
+ 0: 5C KS 9H JH 
+ 1: QH KC 
+ 2: 5S 6D 7C 8D 9S TH 
+ 3: 
+ 4: 2D 3C 4D -QD
+ 5: 3D 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: JD QS -6S-9C-JS-8H-QC
+ 7: 
+ 8: 7H KD 7S 8C KH 6H TS 
+ 9: 2C AC 
+10: 
+11: 4S 3S 2S AS 
+12: 5H 4H 3H 2H AH 
+Minimum Moves Needed: 55
+
+----------------------------------------
+Move 5S from tableau 2 on to foundation
+
+ 0: 5C KS 9H JH 
+ 1: QH KC 
+ 2: 6D 7C 8D 9S TH 
+ 3: 
+ 4: 2D 3C 4D -QD
+ 5: 3D 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: JD QS -6S-9C-JS-8H-QC
+ 7: 
+ 8: 7H KD 7S 8C KH 6H TS 
+ 9: 2C AC 
+10: 
+11: 5S 4S 3S 2S AS 
+12: 5H 4H 3H 2H AH 
+Minimum Moves Needed: 54
+
+----------------------------------------
+Move 5C from waste on to tableau 2
+
+ 0: KS 9H JH 
+ 1: QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: 
+ 4: 2D 3C 4D -QD
+ 5: 3D 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: JD QS -6S-9C-JS-8H-QC
+ 7: 
+ 8: 7H KD 7S 8C KH 6H TS 
+ 9: 2C AC 
+10: 
+11: 5S 4S 3S 2S AS 
+12: 5H 4H 3H 2H AH 
+Minimum Moves Needed: 54
+
+----------------------------------------
+Draw 2 times and move 6H from waste on to foundation
+
+ 0: KH 8C 7S KD 7H KS 9H JH 
+ 1: QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: 
+ 4: 2D 3C 4D -QD
+ 5: 3D 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: JD QS -6S-9C-JS-8H-QC
+ 7: 
+ 8: TS 
+ 9: 2C AC 
+10: 
+11: 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 52
+
+----------------------------------------
+Move KH from waste on to tableau 3
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: KH 
+ 4: 2D 3C 4D -QD
+ 5: 3D 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: JD QS -6S-9C-JS-8H-QC
+ 7: 
+ 8: TS 
+ 9: 2C AC 
+10: 
+11: 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 51
+
+----------------------------------------
+Move 2 cards from tableau 6 on to tableau 3 and flip tableau 6
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: JD QS KH 
+ 4: 2D 3C 4D -QD
+ 5: 3D 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: 6S -9C-JS-8H-QC
+ 7: 
+ 8: TS 
+ 9: 2C AC 
+10: 
+11: 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 49
+
+----------------------------------------
+Move 6S from tableau 6 on to foundation and flip tableau 6
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: JD QS KH 
+ 4: 2D 3C 4D -QD
+ 5: 3D 4C 5D 6C 7D 8S 9D TC -TD-JC-AD
+ 6: 9C -JS-8H-QC
+ 7: 
+ 8: TS 
+ 9: 2C AC 
+10: 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 47
+
+----------------------------------------
+Move 8 cards from tableau 5 on to tableau 3 and flip tableau 5
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: 3D 4C 5D 6C 7D 8S 9D TC JD QS KH 
+ 4: 2D 3C 4D -QD
+ 5: TD -JC-AD
+ 6: 9C -JS-8H-QC
+ 7: 
+ 8: TS 
+ 9: 2C AC 
+10: 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 46
+
+----------------------------------------
+Move 9C from tableau 6 on to tableau 5 and flip tableau 6
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: 3D 4C 5D 6C 7D 8S 9D TC JD QS KH 
+ 4: 2D 3C 4D -QD
+ 5: 9C TD -JC-AD
+ 6: JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 2C AC 
+10: 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 45
+
+----------------------------------------
+Move 2 cards from tableau 5 on to tableau 6 and flip tableau 5
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: 3D 4C 5D 6C 7D 8S 9D TC JD QS KH 
+ 4: 2D 3C 4D -QD
+ 5: JC -AD
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 2C AC 
+10: 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 43
+
+----------------------------------------
+Move JC from tableau 5 on to tableau 1 and flip tableau 5
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: 3D 4C 5D 6C 7D 8S 9D TC JD QS KH 
+ 4: 2D 3C 4D -QD
+ 5: AD 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 2C AC 
+10: 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 42
+
+----------------------------------------
+Move AD from tableau 5 on to foundation
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: 3D 4C 5D 6C 7D 8S 9D TC JD QS KH 
+ 4: 2D 3C 4D -QD
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 2C AC 
+10: AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 41
+
+----------------------------------------
+Move 2D from tableau 4 on to foundation
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: 3D 4C 5D 6C 7D 8S 9D TC JD QS KH 
+ 4: 3C 4D -QD
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 2C AC 
+10: 2D AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 40
+
+----------------------------------------
+Move 3D from tableau 3 on to foundation
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: 4C 5D 6C 7D 8S 9D TC JD QS KH 
+ 4: 3C 4D -QD
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 2C AC 
+10: 3D 2D AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 39
+
+----------------------------------------
+Move 3C from tableau 4 on to foundation
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: 4C 5D 6C 7D 8S 9D TC JD QS KH 
+ 4: 4D -QD
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 3C 2C AC 
+10: 3D 2D AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 38
+
+----------------------------------------
+Move 4C from tableau 3 on to foundation
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: 5D 6C 7D 8S 9D TC JD QS KH 
+ 4: 4D -QD
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 4C 3C 2C AC 
+10: 3D 2D AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 37
+
+----------------------------------------
+Move 4D from tableau 4 on to foundation and flip tableau 4
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 5C 6D 7C 8D 9S TH 
+ 3: 5D 6C 7D 8S 9D TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 4C 3C 2C AC 
+10: 4D 3D 2D AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 35
+
+----------------------------------------
+Move 5C from tableau 2 on to foundation
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 6D 7C 8D 9S TH 
+ 3: 5D 6C 7D 8S 9D TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 5C 4C 3C 2C AC 
+10: 4D 3D 2D AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 34
+
+----------------------------------------
+Move 5D from tableau 3 on to foundation
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 6D 7C 8D 9S TH 
+ 3: 6C 7D 8S 9D TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 5C 4C 3C 2C AC 
+10: 5D 4D 3D 2D AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 33
+
+----------------------------------------
+Move 6D from tableau 2 on to foundation
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 7C 8D 9S TH 
+ 3: 6C 7D 8S 9D TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 5C 4C 3C 2C AC 
+10: 6D 5D 4D 3D 2D AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 32
+
+----------------------------------------
+Move 6C from tableau 3 on to foundation
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 7C 8D 9S TH 
+ 3: 7D 8S 9D TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 6C 5C 4C 3C 2C AC 
+10: 6D 5D 4D 3D 2D AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 31
+
+----------------------------------------
+Move 7C from tableau 2 on to foundation
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 8D 9S TH 
+ 3: 7D 8S 9D TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 7C 6C 5C 4C 3C 2C AC 
+10: 6D 5D 4D 3D 2D AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 30
+
+----------------------------------------
+Move 7D from tableau 3 on to foundation
+
+ 0: 8C 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 8D 9S TH 
+ 3: 8S 9D TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 7C 6C 5C 4C 3C 2C AC 
+10: 7D 6D 5D 4D 3D 2D AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 29
+
+----------------------------------------
+Move 8C from waste on to foundation
+
+ 0: 7S KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 8D 9S TH 
+ 3: 8S 9D TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 8C 7C 6C 5C 4C 3C 2C AC 
+10: 7D 6D 5D 4D 3D 2D AD 
+11: 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 28
+
+----------------------------------------
+Move 7S from waste on to foundation
+
+ 0: KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 8D 9S TH 
+ 3: 8S 9D TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: 9C TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 8C 7C 6C 5C 4C 3C 2C AC 
+10: 7D 6D 5D 4D 3D 2D AD 
+11: 7S 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 27
+
+----------------------------------------
+Move 9C from tableau 6 on to foundation
+
+ 0: KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 8D 9S TH 
+ 3: 8S 9D TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: 7D 6D 5D 4D 3D 2D AD 
+11: 7S 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 26
+
+----------------------------------------
+Move 8S from tableau 3 on to foundation
+
+ 0: KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 8D 9S TH 
+ 3: 9D TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: 7D 6D 5D 4D 3D 2D AD 
+11: 8S 7S 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 25
+
+----------------------------------------
+Move 8D from tableau 2 on to foundation
+
+ 0: KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 9S TH 
+ 3: 9D TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: 8D 7D 6D 5D 4D 3D 2D AD 
+11: 8S 7S 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 24
+
+----------------------------------------
+Move 9D from tableau 3 on to foundation
+
+ 0: KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 9S TH 
+ 3: TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: TD JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: 8S 7S 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 23
+
+----------------------------------------
+Move TD from tableau 6 on to foundation
+
+ 0: KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 9S TH 
+ 3: TC JD QS KH 
+ 4: QD 
+ 5: 
+ 6: JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: 8S 7S 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 22
+
+----------------------------------------
+Move TC from tableau 3 on to foundation
+
+ 0: KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 9S TH 
+ 3: JD QS KH 
+ 4: QD 
+ 5: 
+ 6: JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: 8S 7S 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 21
+
+----------------------------------------
+Move JD from tableau 3 on to foundation
+
+ 0: KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 9S TH 
+ 3: QS KH 
+ 4: QD 
+ 5: 
+ 6: JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: 8S 7S 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 20
+
+----------------------------------------
+Move QD from tableau 4 on to foundation
+
+ 0: KD 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 9S TH 
+ 3: QS KH 
+ 4: 
+ 5: 
+ 6: JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: 8S 7S 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 19
+
+----------------------------------------
+Move KD from waste on to foundation
+
+ 0: 7H KS 9H JH 
+ 1: JC QH KC 
+ 2: 9S TH 
+ 3: QS KH 
+ 4: 
+ 5: 
+ 6: JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: 8S 7S 6S 5S 4S 3S 2S AS 
+12: 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 18
+
+----------------------------------------
+Move 7H from waste on to foundation
+
+ 0: KS 9H JH 
+ 1: JC QH KC 
+ 2: 9S TH 
+ 3: QS KH 
+ 4: 
+ 5: 
+ 6: JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: 8S 7S 6S 5S 4S 3S 2S AS 
+12: 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 17
+
+----------------------------------------
+Move 9S from tableau 2 on to foundation
+
+ 0: KS 9H JH 
+ 1: JC QH KC 
+ 2: TH 
+ 3: QS KH 
+ 4: 
+ 5: 
+ 6: JS -8H-QC
+ 7: 
+ 8: TS 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 16
+
+----------------------------------------
+Draw 1 time and move TS from waste on to foundation
+
+ 0: KS 9H JH 
+ 1: JC QH KC 
+ 2: TH 
+ 3: QS KH 
+ 4: 
+ 5: 
+ 6: JS -8H-QC
+ 7: 
+ 8: 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 14
+
+----------------------------------------
+Move JS from tableau 6 on to foundation and flip tableau 6
+
+ 0: KS 9H JH 
+ 1: JC QH KC 
+ 2: TH 
+ 3: QS KH 
+ 4: 
+ 5: 
+ 6: 8H -QC
+ 7: 
+ 8: 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: JS TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 12
+
+----------------------------------------
+Move 8H from tableau 6 on to foundation and flip tableau 6
+
+ 0: KS 9H JH 
+ 1: JC QH KC 
+ 2: TH 
+ 3: QS KH 
+ 4: 
+ 5: 
+ 6: QC 
+ 7: 
+ 8: 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: JS TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: 8H 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 10
+
+----------------------------------------
+Move QS from tableau 3 on to foundation
+
+ 0: KS 9H JH 
+ 1: JC QH KC 
+ 2: TH 
+ 3: KH 
+ 4: 
+ 5: 
+ 6: QC 
+ 7: 
+ 8: 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: QS JS TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: 8H 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 9
+
+----------------------------------------
+Move KS from waste on to foundation
+
+ 0: 9H JH 
+ 1: JC QH KC 
+ 2: TH 
+ 3: KH 
+ 4: 
+ 5: 
+ 6: QC 
+ 7: 
+ 8: 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: KS QS JS TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: 8H 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 8
+
+----------------------------------------
+Move 9H from waste on to foundation
+
+ 0: JH 
+ 1: JC QH KC 
+ 2: TH 
+ 3: KH 
+ 4: 
+ 5: 
+ 6: QC 
+ 7: 
+ 8: 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: KS QS JS TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: 9H 8H 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 7
+
+----------------------------------------
+Move TH from tableau 2 on to foundation
+
+ 0: JH 
+ 1: JC QH KC 
+ 2: 
+ 3: KH 
+ 4: 
+ 5: 
+ 6: QC 
+ 7: 
+ 8: 
+ 9: TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: KS QS JS TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: TH 9H 8H 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 6
+
+----------------------------------------
+Move JC from tableau 1 on to foundation
+
+ 0: JH 
+ 1: QH KC 
+ 2: 
+ 3: KH 
+ 4: 
+ 5: 
+ 6: QC 
+ 7: 
+ 8: 
+ 9: JC TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: KS QS JS TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: TH 9H 8H 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 5
+
+----------------------------------------
+Move JH from waste on to foundation
+
+ 0: 
+ 1: QH KC 
+ 2: 
+ 3: KH 
+ 4: 
+ 5: 
+ 6: QC 
+ 7: 
+ 8: 
+ 9: JC TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: KS QS JS TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: JH TH 9H 8H 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 4
+
+----------------------------------------
+Move QH from tableau 1 on to foundation
+
+ 0: 
+ 1: KC 
+ 2: 
+ 3: KH 
+ 4: 
+ 5: 
+ 6: QC 
+ 7: 
+ 8: 
+ 9: JC TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: KS QS JS TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: QH JH TH 9H 8H 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 3
+
+----------------------------------------
+Move QC from tableau 6 on to foundation
+
+ 0: 
+ 1: KC 
+ 2: 
+ 3: KH 
+ 4: 
+ 5: 
+ 6: 
+ 7: 
+ 8: 
+ 9: QC JC TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: KS QS JS TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: QH JH TH 9H 8H 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 2
+
+----------------------------------------
+Move KC from tableau 1 on to foundation
+
+ 0: 
+ 1: 
+ 2: 
+ 3: KH 
+ 4: 
+ 5: 
+ 6: 
+ 7: 
+ 8: 
+ 9: KC QC JC TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: KS QS JS TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: QH JH TH 9H 8H 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 1
+
+----------------------------------------
+Move KH from tableau 3 on to foundation
+
+ 0: 
+ 1: 
+ 2: 
+ 3: 
+ 4: 
+ 5: 
+ 6: 
+ 7: 
+ 8: 
+ 9: KC QC JC TC 9C 8C 7C 6C 5C 4C 3C 2C AC 
+10: KD QD JD TD 9D 8D 7D 6D 5D 4D 3D 2D AD 
+11: KS QS JS TS 9S 8S 7S 6S 5S 4S 3S 2S AS 
+12: KH QH JH TH 9H 8H 7H 6H 5H 4H 3H 2H AH 
+Minimum Moves Needed: 0
+
+----------------------------------------
+2H F2 13 DR1 W1 W3 W2 DR4 WS 35-3 F3 DR2 W3 DR1 NEW DR3 W3 DR3 WC W2 DR1 NEW DR1 W3 W2 52-4 F5 45 F4 35-4 F3 41 F4 74 F7 73 F7 74 F7 7S F7 7C F7 2S W6 DR2 W5 75 F7 7H 3H 3S 2H WH 2S W2 DR2 WH W3 63-2 F6 6S F6 53-8 F5 65 F6 56-2 F5 51 F5 5D 4D 3D 4C 3C 4D F4 2C 3D 2D 3C 2C 3D WC WS 6C 3S 2D 3D 6D 3C 3D 4D WD WH 2S DR1 WS 6S F6 6H F6 3S WS WH 2H 1C WH 1H 6C 1C 3H 
+

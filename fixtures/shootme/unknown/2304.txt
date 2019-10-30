@@ -1,0 +1,17 @@
+ 0: 
+ 1: QS 
+ 2: 5S -5C
+ 3: 3C -KS-3S
+ 4: 6S -3D-4C-QC
+ 5: 5D -KD-2H-2C-6C
+ 6: 8S -3H-4D-TD-8D-5H
+ 7: 9D -QD-JD-7H-AD-TH-7D
+ 8: QH TC KH AH 4H 9H 7S 6D 9C 2D JH AS TS 7C 4S JC 9S AC 8C 8H 2S JS KC 6H 
+ 9: 
+10: 
+11: 
+12: 
+Minimum Moves Needed: 85
+
+Unknown. Max cards in foundation 15 at 81 moves. Took 97120916 ms.
+

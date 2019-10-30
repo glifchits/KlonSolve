@@ -1,0 +1,17 @@
+ 0: 
+ 1: QC 
+ 2: JC -4D
+ 3: 3S -JS-4H
+ 4: 2H -6H-7C-QS
+ 5: 3H -QD-9S-AS-AC
+ 6: 5S -2S-AH-6S-2C-7D
+ 7: 9C -6C-TH-5C-5D-8H-8D
+ 8: 5H KC JH KH 9D TD TC 4C AD 7H 9H KS 6D 8C TS QH KD 3D 7S JD 4S 2D 8S 3C 
+ 9: 
+10: 
+11: 
+12: 
+Minimum Moves Needed: 86
+
+Impossible. Max cards in foundation 5 at 39 moves. Took 310527 ms.
+

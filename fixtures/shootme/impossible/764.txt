@@ -1,0 +1,17 @@
+ 0: 
+ 1: 2S 
+ 2: 7C -KD
+ 3: 8D -6S-AC
+ 4: 3C -4H-3H-AH
+ 5: 3D -5H-JH-6H-9C
+ 6: 7D -5S-JD-AD-KS-TS
+ 7: TC -TD-5C-KC-9H-4S-3S
+ 8: 6D TH JS QH 4D QS AS 7H 8S 8H QD 8C 9S 4C 5D 2C 7S 2D QC 6C 9D 2H JC KH 
+ 9: 
+10: 
+11: 
+12: 
+Minimum Moves Needed: 88
+
+Impossible. Max cards in foundation 2 at 15 moves. Took 905794 ms.
+

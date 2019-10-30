@@ -1,0 +1,17 @@
+ 0: 
+ 1: KH 
+ 2: TS -8C
+ 3: AH -4C-JS
+ 4: 3C -2S-2D-6D
+ 5: 6H -TD-KS-7S-5C
+ 6: 9D -AS-4D-JH-2C-QD
+ 7: 9H -JC-7H-4H-5H-JD-5S
+ 8: TH TC 9C 8D AC 5D 3H KC 6C 8S QC 7C 7D QS 4S 2H 9S 3D QH KD 3S 8H AD 6S 
+ 9: 
+10: 
+11: 
+12: 
+Minimum Moves Needed: 85
+
+Impossible. Max cards in foundation 9 at 39 moves. Took 260170 ms.
+

@@ -1,0 +1,17 @@
+ 0: 
+ 1: 7H 
+ 2: JD -2H
+ 3: QD -8C-2C
+ 4: KD -6C-5H-2S
+ 5: 4D -2D-9S-AD-9C
+ 6: 5D -KS-TH-KC-8H-6D
+ 7: TC -6H-TD-TS-AH-3S-3C
+ 8: AC 6S 8S AS 4H JC 5S 9H JH QH QS JS 4S 4C 5C 7C 7D 7S QC 3D KH 8D 3H 9D 
+ 9: 
+10: 
+11: 
+12: 
+Minimum Moves Needed: 88
+
+Unknown. Max cards in foundation 3 at 36 moves. Took 88751577 ms.
+
