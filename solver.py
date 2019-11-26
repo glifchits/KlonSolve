@@ -35,26 +35,28 @@ def get_actions(state, move_seq):
     return sorted(move_list, key=policy, reverse=True)
 
 
-def solve_aux(state, move_seq, visited):
+def solve_aux(state, move_seq, visited, max_states):
     if state_is_win(state):
-        return move_seq
+        return len(visited), move_seq
     elif state in visited:
         return False
     visited.add(state)
+    if max_states is not None and len(visited) > max_states:
+        raise Exception(f"exceeded max states ({max_states:,})")
     child_moves = get_actions(state, move_seq)
     for move_code in child_moves:
         child_state = play_move(state, move_code)
         new_moveseq = append(move_seq, move_code)
-        ret = solve_aux(child_state, new_moveseq, visited)
+        ret = solve_aux(child_state, new_moveseq, visited, max_states)
         if ret:
             return ret
     return False
 
 
-def solve(state):
+def solve(state, max_states=50_000):
     visited = set()
     move_seq = ()
-    return solve_aux(state, move_seq, visited)
+    return solve_aux(state, move_seq, visited, max_states)
 
 
 if __name__ == "__main__":
@@ -62,10 +64,14 @@ if __name__ == "__main__":
 
     timebudget.report_atexit()
 
-    with open("./fixtures/shootme/solvedmin/47.txt") as f:
+    # this seed takes from 2-10 seconds
+    with open("./fixtures/shootme/solvedmin/2951.txt") as f:
         ret = f.read()
     deck_json = convert_shootme_to_solvitaire_json(ret)
     state = init_from_solvitaire(deck_json)
-    solution = solve(state)
+    solution = solve(state, max_states=100_000)
     if solution:
-        print(list(solution))
+        visited, moves = solution
+        moveseq = list(moves)
+        print(f"solved, visited {visited} states. Solution has {len(moveseq)} moves")
+        print(moveseq)
