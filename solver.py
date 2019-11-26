@@ -1,5 +1,6 @@
 import sys
 import time
+from collections import namedtuple
 from tuplestate import *
 from get_legal_moves import get_legal_moves
 from timebudget import timebudget
@@ -35,14 +36,24 @@ def get_actions(state, move_seq):
     return sorted(move_list, key=policy, reverse=True)
 
 
+EndState = namedtuple(
+    "EndState",
+    ["solved", "moveseq", "visited", "msg", "impossible"],
+    defaults=((None,) * 5),
+)
+
+
 def solve_aux(state, move_seq, visited, max_states):
     if state_is_win(state):
-        return len(visited), move_seq
+        return EndState(solved=True, moveseq=move_seq, visited=len(visited))
+
     elif state in visited:
         return False
+
     visited.add(state)
     if max_states is not None and len(visited) > max_states:
-        raise Exception(f"exceeded max states ({max_states:,})")
+        raise EndState(solved=False, visited=len(visited), msg="exceeded max states")
+
     child_moves = get_actions(state, move_seq)
     for move_code in child_moves:
         child_state = play_move(state, move_code)
@@ -50,7 +61,8 @@ def solve_aux(state, move_seq, visited, max_states):
         ret = solve_aux(child_state, new_moveseq, visited, max_states)
         if ret:
             return ret
-    return False
+
+    return False  # EndState(solved=False, impossible=True, visited=len(visited))
 
 
 def solve(state, max_states=50_000):
@@ -64,14 +76,16 @@ if __name__ == "__main__":
 
     timebudget.report_atexit()
 
-    # this seed takes from 2-10 seconds
-    with open("./fixtures/shootme/solvedmin/2951.txt") as f:
+    with open("./fixtures/shootme/solvedmin/3750.txt") as f:
         ret = f.read()
     deck_json = convert_shootme_to_solvitaire_json(ret)
     state = init_from_solvitaire(deck_json)
     solution = solve(state, max_states=100_000)
-    if solution:
-        visited, moves = solution
-        moveseq = list(moves)
+    print(solution)
+    if solution.solved:
+        moveseq = list(solution.moveseq)
+        visited = solution.visited
         print(f"solved, visited {visited} states. Solution has {len(moveseq)} moves")
         print(moveseq)
+    else:
+        print("no solution")
