@@ -30,7 +30,7 @@ def get_actions(state, move_seq):
     # policy: function(move_code)
     # - given a move code and the state, score the move.
     # - taken over a set of moves, should order the moves by their desirability
-    policy = lambda mc: yan_et_al(mc, state)
+    policy = lambda mc: (yan_et_al(mc, state), mc)
 
     return sorted(move_list, key=policy, reverse=True)
 
