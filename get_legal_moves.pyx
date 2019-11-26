@@ -3,6 +3,42 @@ from timebudget import timebudget
 from tuplestate import *
 
 
+cdef RED = "DH"
+cdef BLACK = "CS"
+cdef VALUE = 0  # could remove these and just import from tuplestate
+cdef SUIT = 1   # could remove these and just import from tuplestate
+
+
+cdef int can_stack(str card, str onto):
+    """ `card` is the card to move, `onto` is the card to stack onto """
+    cdef cs = card[SUIT]
+    cdef os = onto[SUIT]
+    if (cs == 'R' or cs == 'H') and (os == 'R' or os == 'H'):
+        return 0
+    if (cs == 'C' or cs == 'S') and (os == 'C' or os == 'S'):
+        return 0
+    cdef cv = card[VALUE]
+    cdef ov = onto[VALUE]
+    return in_value_order(cv, ov)
+
+
+cdef int in_value_order(str cv, str ov):
+    return 1 if (
+      (cv == "A" and ov == "2") or
+      (cv == "2" and ov == "3") or
+      (cv == "3" and ov == "4") or
+      (cv == "4" and ov == "5") or
+      (cv == "5" and ov == "6") or
+      (cv == "6" and ov == "7") or
+      (cv == "7" and ov == "8") or
+      (cv == "8" and ov == "9") or
+      (cv == "9" and ov == "T") or
+      (cv == "T" and ov == "J") or
+      (cv == "J" and ov == "Q") or
+      (cv == "Q" and ov == "K")
+    ) else 0
+
+
 @timebudget
 def get_draw_moves(state):
     if len(state.stock) == 0 and len(state.waste) == 0:
@@ -59,21 +95,11 @@ def tableau_to_tableau(state):
                         if num_to_move > 1:
                             move += f"-{num_to_move}"
                         moves.add(move)
-                else:
-                    # elif can_stack(src_card, state[dest][-1]):
-                    c = src_card
-                    d = state_dest[-1]
-                    cs = c[SUIT]
-                    cv = c[VALUE]
-                    ds = d[SUIT]
-                    dv = d[VALUE]
-
-                    if (cs in RED and ds in BLACK) or (cs in BLACK and ds in RED):
-                        if (cv, dv) in VALUE_ORDER:
-                            move = f"{src}{dest}"
-                            if num_to_move > 1:
-                                move += f"-{num_to_move}"
-                            moves.add(move)
+                elif can_stack(src_card, state_dest[-1]):
+                    move = f"{src}{dest}"
+                    if num_to_move > 1:
+                        move += f"-{num_to_move}"
+                    moves.add(move)
                 num_to_move += 1
                 idx -= 1
     return moves
@@ -98,8 +124,11 @@ def get_legal_moves(state):
             else:
                 fnd_top = state[fnd][-1]
                 if src_top[SUIT] == fnd_top[SUIT]:
-                    ord = (fnd_top[VALUE], src_top[VALUE])
-                    if ord in VALUE_ORDER:
+                    # ord = (fnd_top[VALUE], src_top[VALUE])
+                    cv = fnd_top[VALUE]
+                    ov = src_top[VALUE]
+                    # if ord in VALUE_ORDER:
+                    if in_value_order(cv, ov):
                         moves.add(move)
     # waste to tableau
     if len(state.waste) > 0:
@@ -127,8 +156,9 @@ def get_legal_moves(state):
                     moves.add(move)
             else:
                 fnd_top = state[fnd][-1]
-                order = (fnd_top[VALUE], waste_top[VALUE])
-                if order in VALUE_ORDER:
+                # order = (fnd_top[VALUE], waste_top[VALUE])
+                # if order in VALUE_ORDER:
+                if in_value_order(fnd_top[VALUE], waste_top[VALUE]):
                     moves.add(move)
     # foundation to tableau
     for fnd, fnd_suit in zip(FNDS, FND_SUITS):

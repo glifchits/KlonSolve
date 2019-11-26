@@ -41,22 +41,6 @@ VALUE = 0  # the 0th index of a card string
 SUIT = 1  # the 1st index of a card string
 FNDS = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
 TABLEAUS = [TABLEAU1, TABLEAU2, TABLEAU3, TABLEAU4, TABLEAU5, TABLEAU6, TABLEAU7]
-VALUE_ORDER = set(
-    [
-        ("A", "2"),
-        ("2", "3"),
-        ("3", "4"),
-        ("4", "5"),
-        ("5", "6"),
-        ("6", "7"),
-        ("7", "8"),
-        ("8", "9"),
-        ("9", "T"),
-        ("T", "J"),
-        ("J", "Q"),
-        ("Q", "K"),
-    ]
-)
 
 
 def irange(start, stop):
@@ -185,18 +169,6 @@ def count_face_up(pile):
             # we want a count so we want (i-1)+1 = i
             return i
     return len(pile)  # (== i+1) all cards are face up
-
-
-@timebudget
-def can_stack(card, onto):
-    """ `card` is the card to move, `onto` is the card to stack onto """
-    RED = "DH"
-    BLACK = "CS"
-    if card[SUIT] in RED and onto[SUIT] in RED:
-        return False
-    if card[SUIT] in BLACK and onto[SUIT] in BLACK:
-        return False
-    return (card[VALUE], onto[VALUE]) in VALUE_ORDER
 
 
 def to_dict(state):

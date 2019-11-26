@@ -1,6 +1,9 @@
-.PHONY: all build profile
+.PHONY: all build profile solver
 
 all: build
+
+solver: build
+	python solver.py
 
 build:
 	@echo Building Cython extension

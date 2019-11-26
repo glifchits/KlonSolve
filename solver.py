@@ -76,16 +76,17 @@ if __name__ == "__main__":
 
     timebudget.report_atexit()
 
-    with open("./fixtures/shootme/solvedmin/3750.txt") as f:
+    with open("./fixtures/shootme/solvedmin/407.txt") as f:
         ret = f.read()
     deck_json = convert_shootme_to_solvitaire_json(ret)
     state = init_from_solvitaire(deck_json)
     solution = solve(state, max_states=100_000)
-    print(solution)
+    print()
     if solution.solved:
         moveseq = list(solution.moveseq)
         visited = solution.visited
-        print(f"solved, visited {visited} states. Solution has {len(moveseq)} moves")
+        print(f"solved, visited {visited} states. Solution has {len(moveseq)} moves\n")
         print(moveseq)
     else:
         print("no solution")
+    print()
