@@ -6,3 +6,6 @@ __pycache__
 build
 *.c
 *.so
+
+
+get_legal_moves.html
