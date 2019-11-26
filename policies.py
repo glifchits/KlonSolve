@@ -1,5 +1,6 @@
 import re
 from tuplestate import *
+from get_legal_moves import get_legal_moves
 from timebudget import timebudget
 
 
@@ -79,3 +80,15 @@ def yan_et_al(move_code, state):
                 pri = 1
 
         return (0, pri)
+
+
+def yan_et_al_prioritized_actions(state, moveseq):
+    # produce the set of legal moves given this state
+    move_list = get_legal_moves(state)
+
+    # policy: function(move_code)
+    # - given a move code and the state, score the move.
+    # - taken over a set of moves, should order the moves by their desirability
+    policy = lambda mc: (yan_et_al(mc, state), mc)
+
+    return sorted(move_list, key=policy, reverse=True)
