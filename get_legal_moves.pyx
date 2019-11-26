@@ -13,7 +13,7 @@ cdef int can_stack(str card, str onto):
     """ `card` is the card to move, `onto` is the card to stack onto """
     cdef cs = card[SUIT]
     cdef os = onto[SUIT]
-    if (cs == 'R' or cs == 'H') and (os == 'R' or os == 'H'):
+    if (cs == 'D' or cs == 'H') and (os == 'D' or os == 'H'):
         return 0
     if (cs == 'C' or cs == 'S') and (os == 'C' or os == 'S'):
         return 0

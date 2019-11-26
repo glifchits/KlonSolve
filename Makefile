@@ -13,7 +13,6 @@ profile:
 	@echo Profile
 	cython get_legal_moves.pyx -a && open get_legal_moves.html
 
-test:
+test: build
 	@echo Running important tests
-	python tuplestate_test.py
-	python solver_test.py
+	python tuplestate_test.py # -k test_endgame_1
