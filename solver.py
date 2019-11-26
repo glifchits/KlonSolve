@@ -37,7 +37,7 @@ def solve_aux(state, move_seq, visited, max_states):
 
     visited.add(state)
     if max_states is not None and len(visited) > max_states:
-        raise EndState(solved=False, visited=len(visited), msg="exceeded max states")
+        return EndState(solved=False, visited=len(visited), msg="exceeded max states")
 
     child_moves = get_actions(state, move_seq)
     for move_code in child_moves:
@@ -53,7 +53,11 @@ def solve_aux(state, move_seq, visited, max_states):
 def solve(state, max_states=50_000):
     visited = set()
     move_seq = ()
-    return solve_aux(state, move_seq, visited, max_states)
+    ret = solve_aux(state, move_seq, visited, max_states)
+    if ret:
+        return ret
+    # otherwise looks like we tried all possible moves
+    return EndState(solved=False, impossible=True, visited=len(visited))
 
 
 if __name__ == "__main__":

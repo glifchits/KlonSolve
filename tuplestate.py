@@ -182,6 +182,24 @@ def to_dict(state):
     }
 
 
+def to_ui_state(state):
+    def update_card(card):
+        t = "t" if "t" in card else "T"
+        return card.replace(t, "10")
+
+    def cardseq(seq):
+        return list(map(update_card, seq))
+
+    s = to_dict(state)
+    s["stock"] = list(map(lambda c: c.lower(), cardseq(s["stock"])))
+    s["waste"] = cardseq(s["waste"])
+    for pile in ["tableau", "foundation"]:
+        for i, seq in enumerate(s[pile]):
+            s[pile][i] = cardseq(s[pile][i])
+
+    return s
+
+
 def pprint_st(state):
     pprint(to_dict(state))
 

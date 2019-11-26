@@ -45,18 +45,18 @@ def get_draw_moves(state):
         return set()
     st = copy(state)
     draw_moves = set()
-    top_cards = set()
+    seen_top_cards = set()
     if len(st[WASTE]) > 0:
-        top_cards.add(st[WASTE][-3:])  # current waste is available
-    for draw_count in range(200):  # should be way more than enough
+        seen_top_cards.add(st[WASTE][-3:])  # current waste is available
+    for draw_count in range(100):  # should be way more than enough
         if len(st[STOCK]) == 0:
             st = replace_stock(st)
         st = draw(st)
         new_move = f"DR{draw_count+1}"
         top_waste = st[WASTE][-3:]
-        if top_waste in top_cards:
+        if top_waste in seen_top_cards: # cycled through
             return draw_moves
-        top_cards.add(top_waste)
+        seen_top_cards.add(top_waste)
         draw_moves.add(new_move)
     return draw_moves
 
