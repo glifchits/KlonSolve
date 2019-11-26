@@ -1,4 +1,4 @@
-.PHONY: all build profile solver
+.PHONY: all build profile solver test
 
 all: build
 
@@ -12,3 +12,8 @@ build:
 profile:
 	@echo Profile
 	cython get_legal_moves.pyx -a && open get_legal_moves.html
+
+test:
+	@echo Running important tests
+	python tuplestate_test.py
+	python solver_test.py
