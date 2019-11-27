@@ -78,6 +78,10 @@ def yan_et_al(move_code, state):
             # – If the move empties a stack, we assign this move a priority of 1.
             elif num == len(state[src]):  # moving all cards on stack
                 pri = 1
+        # draw moves
+        # penalize the ones that Yan et al wouldn't consider
+        if move_code.startswith("DR") and move_code != "DR1":
+            pri = -1
 
         return (0, pri)
 

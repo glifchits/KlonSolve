@@ -40,6 +40,7 @@ def solve(state, max_states=50_000):
             return EndState(solved=False, visited=v, msg="exceeded max states")
         if state in visited:
             return EndState(solved=False, msg="revisited state", visited=v)
+        visited.add(state)
         # Yan et al. Section 4 "Machine Play"
         # 1. identify set of legal moves
         actions = get_actions(state, moveseq)
@@ -51,7 +52,6 @@ def solve(state, max_states=50_000):
         if state_is_win(state):
             return EndState(solved=True, moveseq=move_seq, visited=v)
         # 4. If new card configuration repeats a previous one, declare loss and terminate.
-        visited.add(state)
         # 5. Repeat procedure.
         i += 1
 
