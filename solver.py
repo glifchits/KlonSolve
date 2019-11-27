@@ -50,7 +50,7 @@ def solve(state, max_states=50_000):
         state = play_move(state, action)
         # 3. If all cards are on suit stacks, declare victory and terminate.
         if state_is_win(state):
-            return EndState(solved=True, moveseq=move_seq, visited=v)
+            return EndState(solved=True, moveseq=moveseq, visited=v)
         # 4. If new card configuration repeats a previous one, declare loss and terminate.
         # 5. Repeat procedure.
         i += 1
