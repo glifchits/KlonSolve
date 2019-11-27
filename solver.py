@@ -9,18 +9,6 @@ from policies import *
 sys.setrecursionlimit(10 ** 6)
 
 
-@timebudget
-def get_actions(state, move_seq):
-    """
-    input:
-        state: current state
-        move_seq: sequence of moves taken so far
-    output:
-        list of moves ordered by descending priority
-    """
-    return yan_et_al_prioritized_actions(state, move_seq)
-
-
 class EndState:
     def __init__(self, **kwargs):
         self.solved = kwargs.get("solved", None)
@@ -43,7 +31,7 @@ def solve(state, max_states=50_000):
         visited.add(state)
         # Yan et al. Section 4 "Machine Play"
         # 1. identify set of legal moves
-        actions = get_actions(state, moveseq)
+        actions = yan_et_al_prioritized_actions(state, moveseq)
         # 2. select and execute a legal move
         action = actions[0]
         moveseq.append(action)
@@ -61,7 +49,7 @@ if __name__ == "__main__":
 
     timebudget.report_atexit()
 
-    with open("./fixtures/shootme/solvedmin/407.txt") as f:
+    with open("./fixtures/shootme/solvedmin/5335.txt") as f:
         ret = f.read()
     deck_json = convert_shootme_to_solvitaire_json(ret)
     state = init_from_solvitaire(deck_json)
