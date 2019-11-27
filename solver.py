@@ -9,15 +9,6 @@ from policies import *
 sys.setrecursionlimit(10 ** 6)
 
 
-class EndState:
-    def __init__(self, **kwargs):
-        self.solved = kwargs.get("solved", None)
-        self.moveseq = kwargs.get("moveseq", None)
-        self.visited = kwargs.get("visited", None)
-        self.msg = kwargs.get("msg", None)
-        self.impossible = kwargs.get("impossible", None)
-
-
 def solve(state, max_states=50_000):
     visited = set()
     moveseq = []
@@ -31,11 +22,14 @@ def solve(state, max_states=50_000):
         visited.add(state)
         # Yan et al. Section 4 "Machine Play"
         # 1. identify set of legal moves
-        actions = yan_et_al_prioritized_actions(state, moveseq)
+        result = yan_et_al_rollout_1(state)
         # 2. select and execute a legal move
-        if len(actions) == 0:
+        if result is None:
             return EndState(solved=False, msg="no avail moves", visited=v)
-        action = actions[0]
+        if hasattr(result, "solved"):
+            return result  # solved in rollout
+        # otherwise the rollout gives the old heuristic strategy
+        action = result
         moveseq.append(action)
         state = play_move(state, action)
         # 3. If all cards are on suit stacks, declare victory and terminate.

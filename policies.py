@@ -4,6 +4,15 @@ from get_legal_moves import get_legal_moves
 from timebudget import timebudget
 
 
+class EndState:
+    def __init__(self, **kwargs):
+        self.solved = kwargs.get("solved", None)
+        self.moveseq = kwargs.get("moveseq", None)
+        self.visited = kwargs.get("visited", None)
+        self.msg = kwargs.get("msg", None)
+        self.impossible = kwargs.get("impossible", None)
+
+
 build2suit = re.compile(r"^([1-7])([CDSH])$")
 build2build = re.compile(r"^([1-7])([1-7])(-[2-9])?$")
 talon2build = re.compile(r"^W([1-7])$")
@@ -86,7 +95,7 @@ def yan_et_al(move_code, state):
         return (0, pri)
 
 
-def yan_et_al_prioritized_actions(state, moveseq):
+def yan_et_al_prioritized_actions(state):
     # produce the set of legal moves given this state
     move_list = get_legal_moves(state)
 
@@ -96,3 +105,48 @@ def yan_et_al_prioritized_actions(state, moveseq):
     policy = lambda mc: (yan_et_al(mc, state), mc)
 
     return sorted(move_list, key=policy, reverse=True)
+
+
+def simulate_with_heuristic(state, max_states=50_000):
+    visited = set()
+    moveseq = []
+    i = 0
+    while True:
+        v = len(visited)
+        if i >= max_states:
+            return EndState(solved=False, visited=v, msg="exceeded max states")
+        if state in visited:
+            return EndState(solved=False, msg="revisited state", visited=v)
+        visited.add(state)
+        # Yan et al. Section 4 "Machine Play"
+        # 1. identify set of legal moves
+        # 2. select and execute a legal move
+        action = yan_et_al_prioritized_actions(state)[0]
+        if action is None:
+            return EndState(solved=False, visited=v, msg="run out of actions")
+        moveseq.append(action)
+        state = play_move(state, action)
+        # 3. If all cards are on suit stacks, declare victory and terminate.
+        if state_is_win(state):
+            return EndState(solved=True, moveseq=moveseq, visited=v)
+        # 4. If new card configuration repeats a previous one, declare loss and terminate.
+        # 5. Repeat procedure.
+        i += 1
+
+
+def yan_et_al_rollout_1(state):
+    moves = get_legal_moves(state)
+    for move in moves:
+        new_state = play_move(state, move)
+        result = simulate_with_heuristic(new_state)
+        if result.solved:
+            return EndState(
+                solved=True,
+                msg="solved in rollout",
+                moveseq=(move,) + tuple(result.moveseq),
+            )
+    # no optimal move: use the strategy as before
+    actions = yan_et_al_prioritized_actions(state)
+    if len(actions) == 0:
+        return None
+    return actions[0]
