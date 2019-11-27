@@ -144,6 +144,7 @@ def yan_et_al_rollout_1(state):
             return EndState(
                 solved=True,
                 msg="solved in rollout",
+                visited=result.visited,
                 moveseq=(move,) + tuple(result.moveseq),
             )
     # no optimal move: use the strategy as before
