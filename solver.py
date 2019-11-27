@@ -9,7 +9,7 @@ from policies import *
 sys.setrecursionlimit(10 ** 6)
 
 
-def solve(state, max_states=50_000):
+def solve(state, max_states=50_000, **solver_params):
     visited = set()
     moveseq = []
     i = 0
@@ -22,7 +22,7 @@ def solve(state, max_states=50_000):
         visited.add(state)
         # Yan et al. Section 4 "Machine Play"
         # 1. identify set of legal moves
-        result = yan_et_al_rollout(state, k=2)
+        result = yan_et_al_rollout(state, **solver_params)
         # 2. select and execute a legal move
         if result is None:
             return EndState(solved=False, msg="no avail moves", visited=v)
@@ -53,7 +53,7 @@ if __name__ == "__main__":
         print(fname)
         deck_json = convert_shootme_to_solvitaire_json(ret)
         state = init_from_solvitaire(deck_json)
-        solution = solve(state, max_states=100_000)
+        solution = solve(state, max_states=100_000, k=1)
         # print()
         if solution.solved:
             moveseq = list(solution.moveseq)
