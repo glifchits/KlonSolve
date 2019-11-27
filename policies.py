@@ -121,8 +121,8 @@ def simulate_with_heuristic(state, max_states=50_000):
         # Yan et al. Section 4 "Machine Play"
         # 1. identify set of legal moves
         # 2. select and execute a legal move
-        action = yan_et_al_prioritized_actions(state)[0]
-        if action is None:
+        actions = yan_et_al_prioritized_actions(state)
+        if len(actions) == 0:
             return EndState(solved=False, visited=v, msg="run out of actions")
         moveseq.append(action)
         state = play_move(state, action)
