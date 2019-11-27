@@ -124,6 +124,7 @@ def simulate_with_heuristic(state, max_states=50_000):
         actions = yan_et_al_prioritized_actions(state)
         if len(actions) == 0:
             return EndState(solved=False, visited=v, msg="run out of actions")
+        action = actions[0]
         moveseq.append(action)
         state = play_move(state, action)
         # 3. If all cards are on suit stacks, declare victory and terminate.
