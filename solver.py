@@ -30,36 +30,30 @@ class EndState:
         self.impossible = kwargs.get("impossible", None)
 
 
-def solve_aux(state, move_seq, visited, max_states):
-    if state_is_win(state):
-        return EndState(solved=True, moveseq=move_seq, visited=len(visited))
-
-    elif state in visited:
-        return False
-
-    visited.add(state)
-    if max_states is not None and len(visited) > max_states:
-        return EndState(solved=False, visited=len(visited), msg="exceeded max states")
-
-    child_moves = get_actions(state, move_seq)
-    for move_code in child_moves:
-        child_state = play_move(state, move_code)
-        new_moveseq = move_seq + (move_code,)
-        ret = solve_aux(child_state, new_moveseq, visited, max_states)
-        if ret:
-            return ret
-
-    return False  # EndState(solved=False, impossible=True, visited=len(visited))
-
-
 def solve(state, max_states=50_000):
     visited = set()
-    move_seq = ()
-    ret = solve_aux(state, move_seq, visited, max_states)
-    if ret:
-        return ret
-    # otherwise looks like we tried all possible moves
-    return EndState(solved=False, impossible=True, visited=len(visited))
+    moveseq = []
+    i = 0
+    while True:
+        v = len(visited)
+        if i >= max_states:
+            return EndState(solved=False, visited=v, msg="exceeded max states")
+        if state in visited:
+            return EndState(solved=False, msg="revisited state", visited=v)
+        # Yan et al. Section 4 "Machine Play"
+        # 1. identify set of legal moves
+        actions = get_actions(state, moveseq)
+        # 2. select and execute a legal move
+        action = actions[0]
+        moveseq.append(action)
+        state = play_move(state, action)
+        # 3. If all cards are on suit stacks, declare victory and terminate.
+        if state_is_win(state):
+            return EndState(solved=True, moveseq=move_seq, visited=v)
+        # 4. If new card configuration repeats a previous one, declare loss and terminate.
+        visited.add(state)
+        # 5. Repeat procedure.
+        i += 1
 
 
 if __name__ == "__main__":
