@@ -152,3 +152,25 @@ def yan_et_al_rollout_1(state):
     if len(actions) == 0:
         return None
     return actions[0]
+
+
+def yan_et_al_rollout(state, k):
+    moves = get_legal_moves(state)
+    for move in moves:
+        new_state = play_move(state, move)
+        if k > 1:
+            result = yan_et_al_rollout(new_state, k - 1)
+        elif k == 1:
+            result = simulate_with_heuristic(new_state)
+        if hasattr(result, "solved") and result.solved:
+            return EndState(
+                solved=True,
+                msg="solved in rollout",
+                visited=result.visited,
+                moveseq=(move,) + tuple(result.moveseq),
+            )
+    # no optimal move: use the strategy as before
+    actions = yan_et_al_prioritized_actions(state)
+    if len(actions) == 0:
+        return None
+    return actions[0]
