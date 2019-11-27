@@ -33,6 +33,8 @@ def solve(state, max_states=50_000):
         # 1. identify set of legal moves
         actions = yan_et_al_prioritized_actions(state, moveseq)
         # 2. select and execute a legal move
+        if len(actions) == 0:
+            return EndState(solved=False, msg="no avail moves", visited=v)
         action = actions[0]
         moveseq.append(action)
         state = play_move(state, action)
