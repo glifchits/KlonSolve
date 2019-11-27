@@ -21,11 +21,13 @@ def get_actions(state, move_seq):
     return yan_et_al_prioritized_actions(state, move_seq)
 
 
-EndState = namedtuple(
-    "EndState",
-    ["solved", "moveseq", "visited", "msg", "impossible"],
-    defaults=((None,) * 5),
-)
+class EndState:
+    def __init__(self, **kwargs):
+        self.solved = kwargs.get("solved", None)
+        self.moveseq = kwargs.get("moveseq", None)
+        self.visited = kwargs.get("visited", None)
+        self.msg = kwargs.get("msg", None)
+        self.impossible = kwargs.get("impossible", None)
 
 
 def solve_aux(state, move_seq, visited, max_states):
