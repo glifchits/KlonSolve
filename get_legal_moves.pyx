@@ -241,4 +241,4 @@ np_all_moves = np.array(generate_all_possible_moves())
 
 def vector_legal_moves(state):
     moves = list(get_legal_moves(state))
-    return np.isin(np_all_moves, moves).astype(int)
+    return np.isin(np_all_moves, moves).astype(np.uint8)
