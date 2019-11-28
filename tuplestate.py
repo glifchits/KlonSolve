@@ -1,3 +1,4 @@
+import numpy as np
 from collections import namedtuple
 from pprint import pprint
 from timebudget import timebudget
@@ -313,3 +314,91 @@ def play_move(state, move_code):
         dest = DEST_MOVES[y]
         cards = 1
     return move(state, src, dest, cards=cards)
+
+
+### GENERATING STATE VECTORS
+
+suits = {"C": 1, "D": 2, "S": 3, "H": 4, "c": 5, "d": 6, "s": 7, "h": 8}
+intsuits = {v: k for k, v in suits.items()}
+
+values = {
+    "A": 1,
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6,
+    "7": 7,
+    "8": 8,
+    "9": 9,
+    "T": 10,
+    "J": 11,
+    "Q": 12,
+    "K": 13,
+}
+intvalues = {v: k for k, v in values.items()}
+
+
+# padding
+PAD = {}
+PAD[STOCK] = 24
+PAD[WASTE] = 24
+PAD[FOUNDATION_C] = 13
+PAD[FOUNDATION_D] = 13
+PAD[FOUNDATION_S] = 13
+PAD[FOUNDATION_H] = 13
+PAD[TABLEAU1] = 19
+PAD[TABLEAU2] = 19
+PAD[TABLEAU3] = 19
+PAD[TABLEAU4] = 19
+PAD[TABLEAU5] = 19
+PAD[TABLEAU6] = 19
+PAD[TABLEAU7] = 19
+
+
+def card_to_int(card):
+    val, suit = card
+    s = suits[suit]
+    v = values[val.upper()]
+    cardint = (s << 4) + v
+    return cardint
+
+
+def int_to_card(cardint):
+    if cardint == 0:
+        return None
+    sv = cardint >> 4
+    cv = cardint & 0b1111
+    card = intvalues[cv] + intsuits[sv]
+    if sv >= 5:  # facedown
+        return card.lower()
+    return card
+
+
+def cardint(state_tuple, pad):
+    a = np.fromiter(map(card_to_int, state_tuple), dtype=np.uint8)
+    # do left padding
+    z = np.zeros(pad)
+    z[: a.shape[0]] = a
+    return z
+
+
+def state_to_vec(state):
+    state_arr = np.array([])
+    for pile_idx in range(STOCK, FOUNDATION_H + 1):
+        a = cardint(state[pile_idx], PAD[pile_idx])
+        state_arr = np.concatenate((state_arr, a))
+    return state_arr
+
+
+def vec_to_state(sv):
+    start = 0
+    new_state = []
+    for pile_idx in range(STOCK, FOUNDATION_H + 1):
+        end = start + PAD[pile_idx]
+        x = sv[start:end]
+        a = list(map(int, x.tolist()))
+        y = tuple(filter(bool, map(int_to_card, a)))
+        new_state.append(y)
+        start = end
+    return KlonState(*new_state)

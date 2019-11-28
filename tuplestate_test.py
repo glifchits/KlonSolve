@@ -698,6 +698,58 @@ class TestState(unittest.TestCase):
         state = init_from_dict(d)
         self.assertFalse(state_is_win(state))
 
+    def test_int_to_card_uniqueness(self):
+        cards = set()
+        vals = set()
+        for suit in "CDSH":
+            for value in "A23456789TJQK":
+                for is_facedown in [True, False]:
+                    card = value + suit
+                    if is_facedown:
+                        card = card.lower()
+                    val = card_to_int(card)
+                    cardint = int_to_card(val)
+                    cards.add(card)
+                    vals.add(val)
+        # there should be 104 possible cards
+        # 52 faceup + 52 facedown
+        self.assertEqual(len(cards), 104)
+        # there should be 104 unique card representations as well
+        self.assertEqual(len(vals), 104)
+
+    def test_int_to_card_inversion(self):
+        cards = ["ac", "AC", "2C", "9h", "TS", "jc", "QH", "kd"]
+        for card in cards:
+            transformed = int_to_card(card_to_int(card))
+            self.assertEqual(transformed, card)
+
+    def test_state_to_vec_is_an_array_of_expected_size(self):
+        vec = state_to_vec(self.state)
+        self.assertEqual(vec.shape, (233,))
+
+    def test_state_to_vec_inversion_1(self):
+        transformed = vec_to_state(state_to_vec(self.state))
+        self.assertEqual(transformed, self.state)
+
+    def test_state_to_vec_inversion_2(self):
+        game = {
+            "foundation": [["AC", "2C", "3C"], [], ["AS", "2S", "3S"], []],
+            "waste": "3H,10D,2D,AH,8S,QD,KH,AD,KS,7D,4C,7H,7S".split(","),
+            "stock": ["kc", "9c", "qc"],
+            "tableau": [
+                ["KD", "QS", "JH", "10C", "9H", "8C"],
+                ["3d", "6C"],
+                ["5s", "jd", "JS", "10H", "9S", "8H", "7C", "6H", "5C", "4H"],
+                ["2H"],
+                ["qh", "8d", "JC"],
+                ["4s", "6S"],
+                ["5h", "6d", "5d", "4d", "10S", "9D"],
+            ],
+        }
+        state = init_from_ui_state(game)
+        transformed = vec_to_state(state_to_vec(state))
+        self.assertEqual(transformed, state)
+
 
 if __name__ == "__main__":
     unittest.main()
