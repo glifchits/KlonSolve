@@ -1,6 +1,7 @@
 cimport cython
 from timebudget import timebudget
-from tuplestate import *
+from tuplestate import TABLEAUS, FNDS, FND_SUITS, WASTE, STOCK
+from tuplestate import count_face_up, replace_stock, draw, copy
 
 
 cdef RED = "DH"
@@ -68,10 +69,6 @@ def tableau_to_tableau(state):
     # TABLEAU1 = 1 and TABLEAU7 = 7
     # range(1, 8) is all tableau indices
     FACEUP = {}
-    RED = "DH"
-    BLACK = "CS"
-    VALUE = 0
-    SUIT = 1
     moves = set()
     for tab in range(1, 8):
         pile = state[tab]
