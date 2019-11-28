@@ -1,4 +1,5 @@
 cimport cython
+import numpy as np
 from timebudget import timebudget
 from tuplestate import TABLEAUS, FNDS, FND_SUITS, WASTE, STOCK
 from tuplestate import count_face_up, replace_stock, draw, copy
@@ -172,3 +173,72 @@ def get_legal_moves(state):
     # draw moves
     moves = moves.union(get_draw_moves(state))
     return moves
+
+
+### LEGAL MOVES VECTORIZING
+
+# first generate all possible moves
+def generate_all_possible_moves():
+    # Tableau to tableau
+    moves = set()
+    for src in TABLEAUS:
+        for dest in TABLEAUS:
+            if src == dest:
+                continue
+            # for a given tableau, we can move 13 cards at most
+            # this is the max possible number of faceup cards
+            for num_to_move in range(1, 14):
+                move = f"{src}{dest}"
+                if num_to_move > 1:
+                    move += f"-{num_to_move}"
+                moves.add(move)
+    tableau_moves = list(sorted(moves))
+
+    # Tableau to foundation
+    tab_to_fnd_moves = []
+    for src in TABLEAUS:
+        for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+            move = f"{src}{fnd_suit}"
+            tab_to_fnd_moves.append(move)
+
+    # Waste to tableau
+    waste_to_tab_moves = []
+    for dest in TABLEAUS:
+        move = f"W{dest}"
+        waste_to_tab_moves.append(move)
+
+    # Waste to foundation
+    waste_to_fnd_moves = []
+    for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+        move = f"W{fnd_suit}"
+        waste_to_fnd_moves.append(move)
+
+    # Foundation to tableau
+    fnd_to_tab_moves = []
+    for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+        for tab in TABLEAUS:
+            move = f"{fnd_suit}{tab}"
+            fnd_to_tab_moves.append(move)
+
+    # Draw moves
+    draw_moves = []
+    for draw_count in range(10):  # I think it should be 8 but why not 10
+        new_move = f"DR{draw_count+1}"
+        draw_moves.append(new_move)
+
+    all_moves = (
+        tableau_moves
+        + tab_to_fnd_moves
+        + waste_to_tab_moves
+        + waste_to_fnd_moves
+        + fnd_to_tab_moves
+        + draw_moves
+    )
+    return all_moves
+
+np_all_moves = np.array(generate_all_possible_moves())
+
+
+def vector_legal_moves(state):
+    moves = list(get_legal_moves(state))
+    return np.isin(np_all_moves, moves).astype(int)
