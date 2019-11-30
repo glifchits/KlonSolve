@@ -1,7 +1,6 @@
 import numpy as np
 from collections import namedtuple
 from pprint import pprint
-from timebudget import timebudget
 
 
 KlonState = namedtuple(
@@ -113,14 +112,12 @@ def init_from_solvitaire(game_dict):
     )
 
 
-@timebudget
 def last_face_up(pile):
     if len(pile) == 0:
         return pile
     return pile[:-1] + (pile[-1].upper(),)
 
 
-@timebudget
 def move(state, src_pile, dest_pile, cards=1):
     new_src = last_face_up(state[src_pile][:-cards])
     new_dest = state[dest_pile] + state[src_pile][-cards:]
@@ -130,7 +127,6 @@ def move(state, src_pile, dest_pile, cards=1):
     return KlonState(*new_state)
 
 
-@timebudget
 def draw(state):
     new_waste = state[WASTE]
     new_stock = state[STOCK]
@@ -148,7 +144,6 @@ def copy(state):
     return KlonState(*state)
 
 
-@timebudget
 def replace_stock(state):
     new_waste = ()
     new_stock = tuple(reversed(state[WASTE]))  # reverse the waste pile
@@ -225,7 +220,6 @@ def init_from_dict(game):
     )
 
 
-@timebudget
 def state_is_win(state):
     cards = "A23456789TJQK"
     if len(state.stock) != 0:

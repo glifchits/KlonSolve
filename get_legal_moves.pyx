@@ -1,6 +1,5 @@
 cimport cython
 import numpy as np
-from timebudget import timebudget
 from tuplestate import TABLEAUS, FNDS, FND_SUITS, WASTE, STOCK
 from tuplestate import count_face_up, replace_stock, draw, copy
 
@@ -41,7 +40,6 @@ cdef int in_value_order(str cv, str ov):
     ) else 0
 
 
-@timebudget
 def get_draw_moves(state):
     if len(state.stock) == 0 and len(state.waste) == 0:
         return set()
@@ -65,7 +63,6 @@ def get_draw_moves(state):
 
 @cython.boundscheck(False)
 # @cython.wraparound(False) # causes segfaults
-@timebudget
 def tableau_to_tableau(state):
     # TABLEAU1 = 1 and TABLEAU7 = 7
     # range(1, 8) is all tableau indices
@@ -103,7 +100,6 @@ def tableau_to_tableau(state):
     return moves
 
 
-@timebudget
 def get_legal_moves(state):
     """ returns a set of legal moves given the state """
     moves = set()
