@@ -8,8 +8,7 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 import math
 import random
-from tuplestate import KlonState, play_move, state_is_win
-from get_legal_moves import *
+from gamestate import KlonState, get_legal_moves, play_move, state_is_win
 
 
 class MCTS:
@@ -116,9 +115,9 @@ class KlondikeNode(KlonState):
         self.parent = parent
         self._cached_legal_moves = None
         if parent is None:  # no parents => no ancestors
-            self.ancestor_set = set()
+            self.ancestor_set = frozenset()
         else:  # my ancestors are my parent's ancestors and my parent
-            self.ancestor_set = parent.ancestor_set.union(set([parent]))
+            self.ancestor_set = parent.ancestor_set.union(frozenset([parent]))
         return self
 
     @property

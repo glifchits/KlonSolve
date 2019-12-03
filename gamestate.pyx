@@ -22,29 +22,27 @@ KlonState = namedtuple(
     ],
 )
 
-STOCK = 0
-TABLEAU1 = 1
-TABLEAU2 = 2
-TABLEAU3 = 3
-TABLEAU4 = 4
-TABLEAU5 = 5
-TABLEAU6 = 6
-TABLEAU7 = 7
-WASTE = 8
-FOUNDATION_C = 9
-FOUNDATION_D = 10
-FOUNDATION_S = 11
-FOUNDATION_H = 12
-
+cdef STOCK = 0
+cdef TABLEAU1 = 1
+cdef TABLEAU2 = 2
+cdef TABLEAU3 = 3
+cdef TABLEAU4 = 4
+cdef TABLEAU5 = 5
+cdef TABLEAU6 = 6
+cdef TABLEAU7 = 7
+cdef WASTE = 8
+cdef FOUNDATION_C = 9
+cdef FOUNDATION_D = 10
+cdef FOUNDATION_S = 11
+cdef FOUNDATION_H = 12
 
 cdef RED = "DH"
 cdef BLACK = "CS"
-FND_SUITS = "CDSH"
+cdef FND_SUITS = "CDSH"
 cdef VALUE = 0
 cdef SUIT = 1
 
-FNDS = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
-TABLEAUS = [TABLEAU1, TABLEAU2, TABLEAU3, TABLEAU4, TABLEAU5, TABLEAU6, TABLEAU7]
+cdef FNDS = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
 
 
 def irange(start, stop):
@@ -108,7 +106,7 @@ def get_draw_moves(state):
 
 @cython.boundscheck(False)
 # @cython.wraparound(False) # causes segfaults
-def tableau_to_tableau(state):
+cdef tableau_to_tableau(state):
     # TABLEAU1 = 1 and TABLEAU7 = 7
     # range(1, 8) is all tableau indices
     FACEUP = {}
@@ -117,6 +115,8 @@ def tableau_to_tableau(state):
         pile = state[tab]
         fu = count_face_up(pile)
         FACEUP[tab] = pile[-fu:]
+
+    cdef Py_ssize_t idx
     for src in range(1, 8):
         for dest in range(1, 8):
             if src == dest:
@@ -151,11 +151,15 @@ def get_legal_moves(state):
     # tab to tab
     moves = moves.union(tableau_to_tableau(state))
     # tab to foundation
-    for src in TABLEAUS:
+
+    for src in range(1, 8):
         if len(state[src]) == 0:
             continue  # can't move empty to foundation
         src_top = state[src][-1]
-        for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+        # for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+        for fnd_i in range(0, 4):
+            fnd = FNDS[fnd_i]
+            fnd_suit = FND_SUITS[fnd_i]
             move = f"{src}{fnd_suit}"
             if len(state[fnd]) == 0:
                 if src_top[VALUE] == "A" and src_top[SUIT] == fnd_suit:
@@ -172,7 +176,7 @@ def get_legal_moves(state):
     # waste to tableau
     if len(state.waste) > 0:
         waste_top = state.waste[-1]
-        for dest in TABLEAUS:
+        for dest in range(1, 8):
             move = f"W{dest}"
             if len(state[dest]) == 0:
                 # empty tableau, can move a king
@@ -186,7 +190,10 @@ def get_legal_moves(state):
     # waste to foundation
     if len(state.waste) > 0:
         waste_top = state.waste[-1]
-        for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+        # for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+        for fnd_i in range(0, 4):
+            fnd = FNDS[fnd_i]
+            fnd_suit = FND_SUITS[fnd_i]
             if waste_top[SUIT] != fnd_suit:
                 continue  # only bother looking at the correct foundation
             move = f"W{fnd_suit}"
@@ -200,11 +207,14 @@ def get_legal_moves(state):
                 if in_value_order(fnd_top[VALUE], waste_top[VALUE]):
                     moves.add(move)
     # foundation to tableau
-    for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+    # for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+    for fnd_i in range(0, 4):
+        fnd = FNDS[fnd_i]
+        fnd_suit = FND_SUITS[fnd_i]
         if len(state[fnd]) == 0:
             continue  # can't move any cards from an empty foundation
         fnd_top = state[fnd][-1]
-        for tab in TABLEAUS:
+        for tab in range(1, 8):
             if len(state[tab]) == 0:
                 continue  # not gonna move a king onto empty tableau
             tab_top = state[tab][-1]
@@ -229,18 +239,20 @@ def replace_stock(state):
     return KlonState(*new_state)
 
 
-def count_face_up(pile):
+cdef count_face_up(pile):
     """ number of faceup cards in a given TABLEAU pile """
-    if len(pile) == 0:
-        return 0
-    if len(pile) == 1:
-        return 1
-    for i, card in enumerate(reversed(pile)):
+    cdef Py_ssize_t lenpile = len(pile)
+    cdef Py_ssize_t i
+    if lenpile <= 1:
+        return lenpile
+    for i in range(lenpile):
+        card_idx = lenpile - 1 - i
+        card = pile[card_idx]
         if card[1] in "cdsh":  # the i'th card is face-down
             # therefore the (i-1)th card is face-up
             # we want a count so we want (i-1)+1 = i
             return i
-    return len(pile)  # (== i+1) all cards are face up
+    return lenpile  # (== i+1) all cards are face up
 
 
 def last_face_up(pile):
@@ -455,6 +467,7 @@ def vec_to_state(sv):
 def generate_all_possible_moves():
     # Tableau to tableau
     moves = set()
+    TABLEAUS = [TABLEAU1, TABLEAU2, TABLEAU3, TABLEAU4, TABLEAU5, TABLEAU6, TABLEAU7]
     for src in TABLEAUS:
         for dest in TABLEAUS:
             if src == dest:

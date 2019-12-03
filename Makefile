@@ -9,9 +9,9 @@ build:
 	@echo Building Cython extension
 	python setup.py build_ext --inplace
 
-profile:
+profile: test
 	@echo Profile
-	cython get_legal_moves.pyx -a && open get_legal_moves.html
+	cython gamestate.pyx -a && open gamestate.html
 
 test: build
 	@echo Running important tests

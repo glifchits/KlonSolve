@@ -5,6 +5,21 @@ import unittest
 import json
 
 
+STOCK = 0
+TABLEAU1 = 1
+TABLEAU2 = 2
+TABLEAU3 = 3
+TABLEAU4 = 4
+TABLEAU5 = 5
+TABLEAU6 = 6
+TABLEAU7 = 7
+WASTE = 8
+FOUNDATION_C = 9
+FOUNDATION_D = 10
+FOUNDATION_S = 11
+FOUNDATION_H = 12
+
+
 class TestState(unittest.TestCase):
     def test_init_from_solvitaire(self):
         with open("./fixtures/sm-seed12.json") as f:
