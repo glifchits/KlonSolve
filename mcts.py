@@ -8,7 +8,13 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 import math
 import random
-from gamestate import KlonState, get_legal_moves, play_move, state_is_win
+from gamestate import (
+    KlonState,
+    get_legal_moves,
+    play_move,
+    state_is_win,
+    to_pretty_string,
+)
 
 
 class MCTS:
@@ -175,18 +181,11 @@ class KlondikeNode(KlonState):
             return -1
         return 0
 
+    def to_pretty_string(state):
+        return to_pretty_string(state)
+
     def to_vec(state):
         return state_to_vec(state)
-
-    def to_pretty_string(state):
-        s = ""
-        s += "Stock: " + " ".join(state.stock)
-        s += "\nWaste: " + " ".join(state.waste)
-        for fsuit, fnd_idx in zip(FND_SUITS, FNDS):
-            s += f"\nFnd {fsuit}: " + " ".join(state[fnd_idx])
-        for tab in TABLEAUS:
-            s += f"\nTab {tab}: " + " ".join(state[tab])
-        return s
 
     def __repr__(state):
         i = hash(state) % 99999
