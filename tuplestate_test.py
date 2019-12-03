@@ -1,5 +1,5 @@
-from tuplestate import *
-from get_legal_moves import get_legal_moves, vector_legal_moves
+from gamestate import *
+from tuplestate import init_from_solvitaire, init_from_ui_state, init_from_dict
 import numpy as np
 import unittest
 import json
