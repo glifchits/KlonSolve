@@ -8,4 +8,6 @@ build
 *.so
 
 
-get_legal_moves.html
+*.html
+
+misc

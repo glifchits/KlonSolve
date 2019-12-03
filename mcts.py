@@ -79,13 +79,13 @@ class MCTS:
 
     def _simulate(self, node):
         "Returns the reward for a random simulation (to completion) of `node`"
-        invert_reward = True
-        while True:
+        max_states = 10_000
+        for _ in range(max_states):
             if node.is_terminal():
                 reward = node.reward()
-                return 1 - reward if invert_reward else reward
+                return reward
             node = node.find_random_child()
-            invert_reward = not invert_reward
+        return -0.1  # reward for bailed out at state limit
 
     def _backpropagate(self, path, reward):
         "Send the reward back up to the ancestors of the leaf"
@@ -190,5 +190,5 @@ class KlondikeNode(KlonState):
         return s
 
     def __repr__(state):
-        i = hash(state) % 9999
+        i = hash(state) % 99999
         return f"K{i}"
