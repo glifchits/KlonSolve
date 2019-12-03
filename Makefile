@@ -15,4 +15,11 @@ profile:
 
 test: build
 	@echo Running important tests
-	python tuplestate_test.py # -k test_endgame_1
+	python tuplestate_test.py
+
+testall: build
+	@echo Running all tests
+	python tuplestate_test.py
+	python solver_test.py
+	python policies_test.py
+	python benchmarking_test.py

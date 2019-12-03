@@ -1,6 +1,6 @@
 import re
 from tuplestate import *
-from get_legal_moves import get_legal_moves
+from gamestate import get_legal_moves
 from timebudget import timebudget
 
 

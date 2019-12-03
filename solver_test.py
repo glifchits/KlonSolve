@@ -19,7 +19,7 @@ TIMEOUT = "TIMEOUT"
 
 @timeout(1)
 def solve_under_1sec(initial_state):
-    solution = solve(initial_state)
+    solution = solve(initial_state, k=1)
     return solution
 
 
@@ -87,7 +87,8 @@ class TestSolver(unittest.TestCase):
             ],
         }
         state = init_from_ui_state(game)
-        solution = quick_solve(state)
+        result = quick_solve(state)
+        solution = result.moveseq
         self.assertNotEqual(solution, TIMEOUT, "timed out")
         self.assertNotEqual(solution, False, "game incorrectly deemed unsolvable")
         self.assertTrue(validate_move_seq(state, solution))
@@ -98,7 +99,8 @@ class TestSolver(unittest.TestCase):
             ret = f.read()
         deck_json = convert_shootme_to_solvitaire_json(ret)
         state = init_from_solvitaire(deck_json)
-        solution = quick_solve(state)
+        result = quick_solve(state)
+        solution = result.moveseq
         self.assertNotEqual(solution, TIMEOUT)
         self.assertNotEqual(solution, False)
         self.assertTrue(validate_move_seq(state, solution))
