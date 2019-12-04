@@ -22,25 +22,25 @@ KlonState = namedtuple(
     ],
 )
 
-cdef STOCK = 0
-cdef TABLEAU1 = 1
-cdef TABLEAU2 = 2
-cdef TABLEAU3 = 3
-cdef TABLEAU4 = 4
-cdef TABLEAU5 = 5
-cdef TABLEAU6 = 6
-cdef TABLEAU7 = 7
-cdef WASTE = 8
-cdef FOUNDATION_C = 9
-cdef FOUNDATION_D = 10
-cdef FOUNDATION_S = 11
-cdef FOUNDATION_H = 12
+DEF STOCK = 0
+DEF TABLEAU1 = 1
+DEF TABLEAU2 = 2
+DEF TABLEAU3 = 3
+DEF TABLEAU4 = 4
+DEF TABLEAU5 = 5
+DEF TABLEAU6 = 6
+DEF TABLEAU7 = 7
+DEF WASTE = 8
+DEF FOUNDATION_C = 9
+DEF FOUNDATION_D = 10
+DEF FOUNDATION_S = 11
+DEF FOUNDATION_H = 12
 
-cdef RED = "DH"
-cdef BLACK = "CS"
-cdef FND_SUITS = "CDSH"
-cdef VALUE = 0
-cdef SUIT = 1
+DEF RED = "DH"
+DEF BLACK = "CS"
+DEF FND_SUITS = "CDSH"
+DEF VALUE = 0
+DEF SUIT = 1
 
 cdef FNDS = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
 
@@ -55,34 +55,39 @@ def irange(start, stop):
 
 cdef int can_stack(str card, str onto):
     """ `card` is the card to move, `onto` is the card to stack onto """
-    cdef cs = card[SUIT]
-    cdef os = onto[SUIT]
-    if (cs == 'D' or cs == 'H') and (os == 'D' or os == 'H'):
+    cdef int cs = ord(card[SUIT])  # TODO: not sure why ord is necessary here.
+    cdef int os = ord(onto[SUIT])  # it works in Jupyter %%cython with just cdef char
+    cdef int C = 67
+    cdef int D = 68
+    cdef int S = 83
+    cdef int H = 72
+    if (cs == D or cs == H) and (os == D or os == H):
         return 0
-    if (cs == 'C' or cs == 'S') and (os == 'C' or os == 'S'):
+    if (cs == C or cs == S) and (os == C or os == S):
         return 0
-    cdef cv = card[VALUE]
-    cdef ov = onto[VALUE]
-    return in_value_order(cv, ov)
+    return cards_in_value_order(card, onto)
 
 
-cdef int in_value_order(str cv, str ov):
+cdef int cards_in_value_order(str card, str onto):
+    cdef int cv = ord(card[0])  # see above
+    cdef int ov = ord(onto[0])
     return 1 if (
-      (cv == "A" and ov == "2") or
-      (cv == "2" and ov == "3") or
-      (cv == "3" and ov == "4") or
-      (cv == "4" and ov == "5") or
-      (cv == "5" and ov == "6") or
-      (cv == "6" and ov == "7") or
-      (cv == "7" and ov == "8") or
-      (cv == "8" and ov == "9") or
-      (cv == "9" and ov == "T") or
-      (cv == "T" and ov == "J") or
-      (cv == "J" and ov == "Q") or
-      (cv == "Q" and ov == "K")
+        ((cv == 65 or cv == 97) and (ov == 50)) or               # Aa to 2
+        ((cv == 50) and (ov == 51)) or                           # 2 to 3
+        ((cv == 51) and (ov == 52)) or                           # 3 to 4
+        ((cv == 52) and (ov == 53)) or                           # 4 to 5
+        ((cv == 53) and (ov == 54)) or                           # 5 to 6
+        ((cv == 54) and (ov == 55)) or                           # 6 to 7
+        ((cv == 55) and (ov == 56)) or                           # 7 to 8
+        ((cv == 56) and (ov == 57)) or                           # 8 to 9
+        ((cv == 57) and (ov == 84 or ov == 116)) or              # 9 to Tt
+        ((cv == 84 or cv == 116) and (ov == 74 or ov == 106)) or # Tt to Jj
+        ((cv == 74 or cv == 106) and (ov == 81 or ov == 113)) or # Jj to Qq
+        ((cv == 81 or cv == 113) and (ov == 75 or ov == 107))    # Qq to Kk
     ) else 0
 
 
+@cython.boundscheck(False)
 def get_draw_moves(state):
     if len(state.stock) == 0 and len(state.waste) == 0:
         return set()
@@ -105,7 +110,6 @@ def get_draw_moves(state):
 
 
 @cython.boundscheck(False)
-# @cython.wraparound(False) # causes segfaults
 cdef tableau_to_tableau(state):
     # TABLEAU1 = 1 and TABLEAU7 = 7
     # range(1, 8) is all tableau indices
@@ -145,6 +149,7 @@ cdef tableau_to_tableau(state):
     return moves
 
 
+@cython.boundscheck(False)
 def get_legal_moves(state):
     """ returns a set of legal moves given the state """
     moves = set()
@@ -160,32 +165,30 @@ def get_legal_moves(state):
         for fnd_i in range(0, 4):
             fnd = FNDS[fnd_i]
             fnd_suit = FND_SUITS[fnd_i]
-            move = f"{src}{fnd_suit}"
             if len(state[fnd]) == 0:
                 if src_top[VALUE] == "A" and src_top[SUIT] == fnd_suit:
+                    move = f"{src}{fnd_suit}"
                     moves.add(move)
             else:
                 fnd_top = state[fnd][-1]
                 if src_top[SUIT] == fnd_top[SUIT]:
-                    # ord = (fnd_top[VALUE], src_top[VALUE])
-                    cv = fnd_top[VALUE]
-                    ov = src_top[VALUE]
-                    # if ord in VALUE_ORDER:
-                    if in_value_order(cv, ov):
+                    if cards_in_value_order(fnd_top, src_top):
+                        move = f"{src}{fnd_suit}"
                         moves.add(move)
     # waste to tableau
     if len(state.waste) > 0:
         waste_top = state.waste[-1]
         for dest in range(1, 8):
-            move = f"W{dest}"
             if len(state[dest]) == 0:
                 # empty tableau, can move a king
                 if waste_top[VALUE] == "K":
+                    move = f"W{dest}"
                     moves.add(move)
             else:
                 # non-empty tableau pile, can stack normally
                 dest_top = state[dest][-1]
                 if can_stack(waste_top, dest_top):
+                    move = f"W{dest}"
                     moves.add(move)
     # waste to foundation
     if len(state.waste) > 0:
@@ -196,15 +199,16 @@ def get_legal_moves(state):
             fnd_suit = FND_SUITS[fnd_i]
             if waste_top[SUIT] != fnd_suit:
                 continue  # only bother looking at the correct foundation
-            move = f"W{fnd_suit}"
             if len(state[fnd]) == 0:
                 if waste_top[VALUE] == "A":
+                    move = f"W{fnd_suit}"
                     moves.add(move)
             else:
                 fnd_top = state[fnd][-1]
                 # order = (fnd_top[VALUE], waste_top[VALUE])
                 # if order in VALUE_ORDER:
-                if in_value_order(fnd_top[VALUE], waste_top[VALUE]):
+                if cards_in_value_order(fnd_top, waste_top):
+                    move = f"W{fnd_suit}"
                     moves.add(move)
     # foundation to tableau
     # for fnd, fnd_suit in zip(FNDS, FND_SUITS):
@@ -239,7 +243,8 @@ def replace_stock(state):
     return KlonState(*new_state)
 
 
-cdef count_face_up(pile):
+@cython.boundscheck(False)
+def count_face_up(pile):
     """ number of faceup cards in a given TABLEAU pile """
     cdef Py_ssize_t lenpile = len(pile)
     cdef Py_ssize_t i
@@ -255,12 +260,14 @@ cdef count_face_up(pile):
     return lenpile  # (== i+1) all cards are face up
 
 
+@cython.boundscheck(False)
 def last_face_up(pile):
     if len(pile) == 0:
         return pile
     return pile[:-1] + (pile[-1].upper(),)
 
 
+@cython.boundscheck(False)
 def move(state, src_pile, dest_pile, cards=1):
     new_src = last_face_up(state[src_pile][:-cards])
     new_dest = state[dest_pile] + state[src_pile][-cards:]
@@ -270,6 +277,7 @@ def move(state, src_pile, dest_pile, cards=1):
     return KlonState(*new_state)
 
 
+@cython.boundscheck(False)
 def draw(state):
     new_waste = state[WASTE]
     new_stock = state[STOCK]
@@ -283,6 +291,7 @@ def draw(state):
     return KlonState(*new_state)
 
 
+@cython.boundscheck(False)
 def play_move(state, move_code):
     """
     Given a move code, perform that move and return the new state
@@ -318,7 +327,7 @@ def play_move(state, move_code):
 		X will be 1 through 7, W for Waste, or a foundation suit character.
                 'C'lubs, 'D'iamonds, 'S'pades, 'H'earts
 		Y will be 1 through 7 or the foundation suit character.
-	XY-# is the same as above except you are moving # number of cards from X to Y.
+    	XY-# is the same as above except you are moving # number of cards from X to Y.
     """
     TABLEAU = {
         "1": TABLEAU1,

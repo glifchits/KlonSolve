@@ -1,7 +1,5 @@
 import re
-from tuplestate import *
-from gamestate import get_legal_moves
-from timebudget import timebudget
+from gamestate import get_legal_moves, count_face_up
 
 
 class EndState:
@@ -19,8 +17,26 @@ talon2build = re.compile(r"^W([1-7])$")
 suit2build = re.compile(r"^([CDSH])([1-7])$")
 drawmove = re.compile(r"^DR([1-9][0-9]?)$")
 
+VALUE, SUIT = 0, 1
+STOCK = 0
+TABLEAU1 = 1
+TABLEAU2 = 2
+TABLEAU3 = 3
+TABLEAU4 = 4
+TABLEAU5 = 5
+TABLEAU6 = 6
+TABLEAU7 = 7
+WASTE = 8
+FOUNDATION_C = 9
+FOUNDATION_D = 10
+FOUNDATION_S = 11
+FOUNDATION_H = 12
 
-@timebudget
+
+def irange(lo, hi):
+    return range(lo, hi + 1)
+
+
 def yan_et_al(move_code, state):
     """
     returns a tuple: (reward, priority)
