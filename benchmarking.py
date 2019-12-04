@@ -1,6 +1,35 @@
 import re
+import os
+import random
 import subprocess
 from pprint import pprint
+from tuplestate import init_from_solvitaire
+
+
+def listdir(path):
+    ls = os.listdir(path)
+    return [os.path.join(path, f) for f in ls]
+
+
+def filename_to_klonstate(fname):
+    with open(fname) as f:
+        solv = convert_shootme_to_solvitaire_json(f.read())
+        state = init_from_solvitaire(solv)
+    return state
+
+
+def random_state(solved=True):
+    if solved == True:
+        dirs = ["solved", "solvedmin"]
+    elif solved == False:
+        dirs = ["impossible"]
+    elif solved == None:
+        dirs = ["unknown"]
+    fulldirs = (f"./fixtures/shootme/{d}" for d in dirs)
+    fixtures = [f for d in fulldirs for f in listdir(d)]
+    fname = random.choice(fixtures)
+    state = filename_to_klonstate(fname)
+    return state
 
 
 def run_shootme_seed(seed, fast=False):
