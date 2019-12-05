@@ -4,13 +4,8 @@ import unittest
 from flaky import flaky
 from timeout_decorator import timeout, TimeoutError
 from solver import solve
-from tuplestate import (
-    init_from_ui_state,
-    init_from_solvitaire,
-    state_is_win,
-    copy,
-    play_move,
-)
+from tuplestate import init_from_ui_state, init_from_solvitaire
+from gamestate import state_is_win, copy, play_move
 from benchmarking import convert_shootme_to_solvitaire_json
 
 

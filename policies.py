@@ -1,5 +1,5 @@
 import re
-from gamestate import get_legal_moves, count_face_up
+from gamestate import get_legal_moves, count_face_up, play_move, state_is_win
 
 
 class EndState:
