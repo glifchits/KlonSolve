@@ -1,3 +1,4 @@
+# cython: language_level=3, c_string_type=bytes, c_string_encoding=ascii
 cimport cython
 import numpy as np
 from collections import namedtuple
@@ -53,10 +54,10 @@ def irange(start, stop):
         return range(start, stop - 1, -1)
 
 
-cdef int can_stack(str card, str onto):
+cdef int can_stack(char* card, char* onto):
     """ `card` is the card to move, `onto` is the card to stack onto """
-    cdef int cs = ord(card[SUIT])  # TODO: not sure why ord is necessary here.
-    cdef int os = ord(onto[SUIT])  # it works in Jupyter %%cython with just cdef char
+    cdef int cs = card[SUIT]
+    cdef int os = onto[SUIT]
     cdef int C = 67
     cdef int D = 68
     cdef int S = 83
@@ -68,9 +69,9 @@ cdef int can_stack(str card, str onto):
     return cards_in_value_order(card, onto)
 
 
-cdef int cards_in_value_order(str card, str onto):
-    cdef int cv = ord(card[0])  # see above
-    cdef int ov = ord(onto[0])
+cdef int cards_in_value_order(char* card, char* onto):
+    cdef int cv = card[0]
+    cdef int ov = onto[0]
     return 1 if (
         ((cv == 65 or cv == 97) and (ov == 50)) or               # Aa to 2
         ((cv == 50) and (ov == 51)) or                           # 2 to 3
@@ -85,6 +86,20 @@ cdef int cards_in_value_order(str card, str onto):
         ((cv == 74 or cv == 106) and (ov == 81 or ov == 113)) or # Jj to Qq
         ((cv == 81 or cv == 113) and (ov == 75 or ov == 107))    # Qq to Kk
     ) else 0
+
+
+cdef int card_is_ace(char* card):
+    cdef int ACE = 65
+    cdef int cv = card[0]
+    ret = cv == ACE
+    return ret
+
+
+cdef int card_is_king(char* card):
+    cdef int KING = 75
+    cdef int cv = card[0]
+    ret = cv == KING
+    return ret
 
 
 @cython.boundscheck(False)
@@ -134,7 +149,7 @@ cdef tableau_to_tableau(state):
                 if len(state_dest) == 0:  # tableau empty
                     # only move a king to empty tableau if not the entire stack
                     # this would be a useless move
-                    if src_card[VALUE] == "K" and len(state[src]) > num_to_move:
+                    if card_is_king(src_card) and len(state[src]) > num_to_move:
                         move = f"{src}{dest}"
                         if num_to_move > 1:
                             move += f"-{num_to_move}"
@@ -166,7 +181,7 @@ def get_legal_moves(state):
             fnd = FNDS[fnd_i]
             fnd_suit = FND_SUITS[fnd_i]
             if len(state[fnd]) == 0:
-                if src_top[VALUE] == "A" and src_top[SUIT] == fnd_suit:
+                if card_is_ace(src_top) and src_top[SUIT] == fnd_suit:
                     move = f"{src}{fnd_suit}"
                     moves.add(move)
             else:
@@ -181,7 +196,7 @@ def get_legal_moves(state):
         for dest in range(1, 8):
             if len(state[dest]) == 0:
                 # empty tableau, can move a king
-                if waste_top[VALUE] == "K":
+                if card_is_king(waste_top):
                     move = f"W{dest}"
                     moves.add(move)
             else:
@@ -193,20 +208,17 @@ def get_legal_moves(state):
     # waste to foundation
     if len(state.waste) > 0:
         waste_top = state.waste[-1]
-        # for fnd, fnd_suit in zip(FNDS, FND_SUITS):
         for fnd_i in range(0, 4):
             fnd = FNDS[fnd_i]
             fnd_suit = FND_SUITS[fnd_i]
             if waste_top[SUIT] != fnd_suit:
                 continue  # only bother looking at the correct foundation
             if len(state[fnd]) == 0:
-                if waste_top[VALUE] == "A":
+                if card_is_ace(waste_top):
                     move = f"W{fnd_suit}"
                     moves.add(move)
             else:
                 fnd_top = state[fnd][-1]
-                # order = (fnd_top[VALUE], waste_top[VALUE])
-                # if order in VALUE_ORDER:
                 if cards_in_value_order(fnd_top, waste_top):
                     move = f"W{fnd_suit}"
                     moves.add(move)
