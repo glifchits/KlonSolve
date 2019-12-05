@@ -91,15 +91,13 @@ cdef int cards_in_value_order(char* card, char* onto):
 cdef int card_is_ace(char* card):
     cdef int ACE = 65
     cdef int cv = card[0]
-    ret = cv == ACE
-    return ret
+    return cv == ACE
 
 
 cdef int card_is_king(char* card):
     cdef int KING = 75
     cdef int cv = card[0]
-    ret = cv == KING
-    return ret
+    return cv == KING
 
 
 @cython.boundscheck(False)
@@ -259,17 +257,23 @@ def replace_stock(state):
 def count_face_up(pile):
     """ number of faceup cards in a given TABLEAU pile """
     cdef Py_ssize_t lenpile = len(pile)
-    cdef Py_ssize_t i
+    cdef int i
     if lenpile <= 1:
         return lenpile
     for i in range(lenpile):
         card_idx = lenpile - 1 - i
         card = pile[card_idx]
-        if card[1] in "cdsh":  # the i'th card is face-down
+        if card_is_face_down(card):  # the i'th card is face-down
             # therefore the (i-1)th card is face-up
             # we want a count so we want (i-1)+1 = i
             return i
     return lenpile  # (== i+1) all cards are face up
+
+
+cdef int card_is_face_down(char* card):
+    # c=99, d=100, s=115, h=104
+    cdef char sv = card[1]
+    return sv == 99 or sv == 100 or sv == 115 or sv == 104
 
 
 @cython.boundscheck(False)
@@ -313,13 +317,15 @@ def play_move(state, move_code):
     DR# is a draw move that is done # number of times.
     ie) DR2 means draw twice, if draw count > 1 it is still DR2.
     """
+    cdef int draws_remaining
     if move_code.startswith("DR"):
         st = copy(state)
-        draws = int(move_code[2:])
-        for draws_remaining in irange(draws, 1):
-            if len(st.stock) == 0 and draws_remaining > 0:
+        draws_remaining = int(move_code[2:])
+        while draws_remaining >= 1:
+            if len(st.stock) == 0:
                 st = replace_stock(st)
             st = draw(st)
+            draws_remaining -= 1
         return st
 
     """
@@ -341,35 +347,34 @@ def play_move(state, move_code):
 		Y will be 1 through 7 or the foundation suit character.
     	XY-# is the same as above except you are moving # number of cards from X to Y.
     """
-    TABLEAU = {
-        "1": TABLEAU1,
-        "2": TABLEAU2,
-        "3": TABLEAU3,
-        "4": TABLEAU4,
-        "5": TABLEAU5,
-        "6": TABLEAU6,
-        "7": TABLEAU7,
-    }
-    FOUNDATION = {
-        "C": FOUNDATION_C,
-        "D": FOUNDATION_D,
-        "S": FOUNDATION_S,
-        "H": FOUNDATION_H,
-    }
-    SRC_MOVES = {**TABLEAU, **FOUNDATION, "W": WASTE}
-    DEST_MOVES = {**TABLEAU, **FOUNDATION}
     if "-" in move_code:
         xy, num = move_code.split("-")
         x, y = xy
-        src = TABLEAU[x]
-        dest = TABLEAU[y]
+        src = pile_lookup(x)
+        dest = pile_lookup(y)
         cards = int(num)
     else:
         x, y = move_code
-        src = SRC_MOVES[x]
-        dest = DEST_MOVES[y]
+        src = pile_lookup(x)
+        dest = pile_lookup(y)
         cards = 1
     return move(state, src, dest, cards=cards)
+
+
+cdef int pile_lookup(char* pilestr):
+    cdef char p = pilestr[0]
+    if p == 49: return TABLEAU1      # 1
+    if p == 50: return TABLEAU2      # 2
+    if p == 51: return TABLEAU3      # 3
+    if p == 52: return TABLEAU4      # 4
+    if p == 53: return TABLEAU5      # 5
+    if p == 54: return TABLEAU6      # 6
+    if p == 55: return TABLEAU7      # 7
+    if p == 67: return FOUNDATION_C  # C
+    if p == 68: return FOUNDATION_D  # D
+    if p == 83: return FOUNDATION_S  # S
+    if p == 72: return FOUNDATION_H  # H
+    if p == 87: return WASTE         # W
 
 
 def state_is_win(state):
@@ -378,15 +383,21 @@ def state_is_win(state):
         return False
     if len(state.waste) != 0:
         return False
-    for fnd in FNDS:
+    for fnd_i in range(0, 4):
+        fnd = fnd_i + 9
         if len(state[fnd]) != 13:
             return False
-    for tab in irange(TABLEAU1, TABLEAU7):
+    for tab in range(TABLEAU1, TABLEAU7+1):
         if len(state[tab]) != 0:
             return False
-    for fnd, fnd_suit in zip(FNDS, FND_SUITS):
-        fnd_pile = state[fnd]
-        for card, expected_value in zip(fnd_pile, cards):
+    for fnd_i in range(0, 4):
+        fnd_pile_idx = fnd_i + 9
+        fnd_pile = state[fnd_pile_idx]
+        fnd_suit = "CDSH"[fnd_i]
+        # for card, expected_value in zip(fnd_pile, cards):
+        for i in range(13):
+            card = fnd_pile[i]
+            expected_value = cards[i]
             if card[SUIT] != fnd_suit:
                 return False
             if card[VALUE] != expected_value:
