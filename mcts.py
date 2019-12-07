@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 import math
 import random
+from decimal import *
 from gamestate import (
     KlonState,
     get_legal_moves,
@@ -15,6 +16,7 @@ from gamestate import (
     state_is_win,
     to_pretty_string,
 )
+from policies import yan_et_al_prioritized_actions
 
 
 class MCTS:
@@ -32,18 +34,21 @@ class MCTS:
         if node.is_terminal():
             raise RuntimeError(f"choose called on terminal node {node}")
 
-        if not self.children[node]:
-            raise RuntimeError(f"choose called on childless node {node}")
-
         if node not in self.children:
-            return node.find_random_child()
+            print("rollout policy child")
+            return node.rollout_policy_child()
+
+        choose_children = set(self.children[node]) - node.ancestor_set
 
         def score(n):
             if self.N[n] == 0:
                 return float("-inf")  # avoid unseen moves
             return self.Q[n] / self.N[n]  # average reward
 
-        return max(self.children[node], key=score)
+        max_score = max(map(score, choose_children))
+        max_children = [c for c in choose_children if score(c) == max_score]
+        return random.choice(max_children)
+        # return max(choose_children, key=score)
 
     def do_rollout(self, node):
         "Make the tree one layer better. (Train for one iteration.)"
@@ -68,7 +73,26 @@ class MCTS:
                 n = unexplored.pop()
                 path.append(n)
                 return path
-            node = self._uct_select(node)  # descend a layer deeper
+            # node = self._uct_select(node)  # descend a layer deeper
+            # def _uct_select(node):
+            #     "Select a child of node, balancing exploration & exploitation"
+            select_nodes = self.children[node] - set(path)  # dont pick from explored
+            if len(select_nodes) == 0:
+                # node is terminal
+                return path
+
+            # All children should already be expanded:
+            assert all(n in self.children for n in select_nodes)
+
+            log_N_vertex = math.log(self.N[node])
+
+            def uct(n):
+                "Upper confidence bound for trees"
+                exploit = self.Q[n] / self.N[n]
+                explore = Decimal(math.sqrt(log_N_vertex / self.N[n]))
+                return exploit + self.exploration_weight * explore
+
+            node = max(select_nodes, key=uct)
 
     def _expand(self, node):
         "Update the `children` dict with the children of `node`"
@@ -77,42 +101,30 @@ class MCTS:
         children = set()
         for child in node.find_children():
             # only add as a child if it is not child of other nodes
-            if child not in self.existing_children:
-                children.add(child)
-                self.existing_children.add(child)
+            # if child not in self.existing_children:
+            children.add(child)
+            self.existing_children.add(child)
         self.children[node] = children
 
     def _simulate(self, node):
         "Returns the reward for a random simulation (to completion) of `node`"
-        max_states = 10_000
+        max_states = 1_000
+        visited = set([node])
         for _ in range(max_states):
             if node.is_terminal():
                 reward = node.reward()
                 return reward
-            node = node.find_random_child()
-        return -0.1  # reward for bailed out at state limit
+            if node in visited:  # cycle
+                return -1
+            node = node.rollout_policy_child()
+            visited.add(node)
+        return Decimal("-0.1")  # reward for bailed out at state limit
 
     def _backpropagate(self, path, reward):
         "Send the reward back up to the ancestors of the leaf"
         for node in reversed(path):
             self.N[node] += 1
-            self.Q[node] += reward
-            reward = 1 - reward  # 1 for me is 0 for my enemy, and vice versa
-
-    def _uct_select(self, node):
-        "Select a child of node, balancing exploration & exploitation"
-
-        # All children of node should already be expanded:
-        assert all(n in self.children for n in self.children[node])
-
-        log_N_vertex = math.log(self.N[node])
-
-        def uct(n):
-            "Upper confidence bound for trees"
-            t = math.sqrt(log_N_vertex / self.N[n])
-            return self.Q[n] / self.N[n] + self.exploration_weight * t
-
-        return max(self.children[node], key=uct)
+            self.Q[node] += Decimal(reward)
 
 
 class KlondikeNode(KlonState):
@@ -161,6 +173,12 @@ class KlondikeNode(KlonState):
             pdb.set_trace()
         random_child = random.choice(child_list)
         return random_child
+
+    def rollout_policy_child(state):
+        # return state.find_random_child()
+        moves = yan_et_al_prioritized_actions(state)
+        best_move = moves[0]
+        return state.make_move(best_move)
 
     def is_win(state):
         return state_is_win(state)
