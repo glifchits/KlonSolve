@@ -163,13 +163,8 @@ cdef tableau_to_tableau(state):
 
 
 @cython.boundscheck(False)
-def get_legal_moves(state):
-    """ returns a set of legal moves given the state """
+cdef tableau_to_foundation(state):
     moves = set()
-    # tab to tab
-    moves = moves.union(tableau_to_tableau(state))
-    # tab to foundation
-
     for src in range(1, 8):
         if len(state[src]) == 0:
             continue  # can't move empty to foundation
@@ -188,7 +183,12 @@ def get_legal_moves(state):
                     if cards_in_value_order(fnd_top, src_top):
                         move = f"{src}{fnd_suit}"
                         moves.add(move)
-    # waste to tableau
+    return moves
+
+
+@cython.boundscheck(False)
+cdef waste_to_tableau(state):
+    moves = set()
     if len(state.waste) > 0:
         waste_top = state.waste[-1]
         for dest in range(1, 8):
@@ -203,7 +203,12 @@ def get_legal_moves(state):
                 if can_stack(waste_top, dest_top):
                     move = f"W{dest}"
                     moves.add(move)
-    # waste to foundation
+    return moves
+
+
+@cython.boundscheck(False)
+cdef waste_to_foundation(state):
+    moves = set()
     if len(state.waste) > 0:
         waste_top = state.waste[-1]
         for fnd_i in range(0, 4):
@@ -220,8 +225,11 @@ def get_legal_moves(state):
                 if cards_in_value_order(fnd_top, waste_top):
                     move = f"W{fnd_suit}"
                     moves.add(move)
-    # foundation to tableau
-    # for fnd, fnd_suit in zip(FNDS, FND_SUITS):
+    return moves
+
+@cython.boundscheck(False)
+cdef foundation_to_tableau(state):
+    moves = set()
     for fnd_i in range(0, 4):
         fnd = FNDS[fnd_i]
         fnd_suit = FND_SUITS[fnd_i]
@@ -235,6 +243,23 @@ def get_legal_moves(state):
             if can_stack(fnd_top, tab_top):
                 move = f"{fnd_suit}{tab}"
                 moves.add(move)
+    return moves
+
+
+@cython.boundscheck(False)
+def get_legal_moves(state):
+    """ returns a set of legal moves given the state """
+    moves = set()
+    # tab to tab
+    moves = moves.union(tableau_to_tableau(state))
+    # tab to foundation
+    moves = moves.union(tableau_to_foundation(state))
+    # waste to tableau
+    moves = moves.union(waste_to_tableau(state))
+    # waste to foundation
+    moves = moves.union(waste_to_foundation(state))
+    # foundation to tableau
+    moves = moves.union(foundation_to_tableau(state))
     # draw moves
     moves = moves.union(get_draw_moves(state))
     return moves
