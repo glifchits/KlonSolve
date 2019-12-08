@@ -1,4 +1,5 @@
 from gamestate import *
+from vectorize import *
 from tuplestate import init_from_solvitaire, init_from_ui_state, init_from_dict
 import numpy as np
 import unittest
