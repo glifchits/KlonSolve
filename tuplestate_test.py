@@ -445,6 +445,66 @@ class TestState(unittest.TestCase):
             state = play_move(state, move_code)
         self.assertTrue(state_is_win(state))
 
+    def test_random_move_1(self):
+        state = copy(self.state)
+        moves = get_legal_moves(state)
+        for _ in range(10):
+            move = random_move(state)
+            self.assertIn(move, moves)
+
+    def test_random_move_2(self):
+        game = {
+            "foundation": [
+                ["AC", "2C", "3C", "4C", "5C", "6C", "7C", "8C", "9C", "10C", "JC"],
+                ["AD", "2D", "3D", "4D", "5D", "6D", "7D", "8D", "9D", "10D", "JD"],
+                ["AS", "2S", "3S", "4S", "5S", "6S", "7S", "8S", "9S", "10S", "JS"],
+                ["AH", "2H", "3H", "4H", "5H", "6H", "7H", "8H", "9H", "10H", "JH"],
+            ],
+            "waste": [],
+            "stock": [],
+            "tableau": [
+                ["KD", "QS"],
+                ["KH", "QC"],
+                [],
+                ["KC"],
+                ["QH"],
+                ["KS", "QD"],
+                [],
+            ],
+        }
+        state = init_from_ui_state(game)
+        moves = get_legal_moves(state)
+        for _ in range(10):
+            move = random_move(state)
+            self.assertIn(move, moves)
+
+    def test_random_move_3(self):
+        game = {
+            "foundation": [["AC", "2C"], [], [], []],
+            # fmt: off
+            "waste": [
+                "3H", "10D", "2D", "AS", "4H", "6H", "AH",
+                "8S", "QD", "KH", "AD", "KS", "7D", "4C",
+                "10C", "7H", "7S", "3C",
+            ],
+            # fmt: on
+            "stock": ["kc", "9c", "qc"],
+            "tableau": [
+                ["KD", "QS", "JH"],
+                ["3d", "6C"],
+                ["5s", "jd", "JS", "10H", "9S", "8H", "7C"],
+                ["2H"],
+                ["qh", "8d", "JC"],
+                ["4s", "6s", "2s", "3s", "9d", "5C"],
+                ["5h", "6d", "5d", "4d", "10s", "9H", "8C"],
+            ],
+        }
+        state = init_from_ui_state(game)
+        moves = get_legal_moves(state)
+        for _ in range(10):
+            move = random_move(state)
+            self.assertIn(move, moves)
+
     def test_irange_forward(self):
         expected = [4, 5, 6, 7, 8, 9]
         actual = list(irange(4, 9))

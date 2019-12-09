@@ -1,5 +1,6 @@
 # cython: language_level=3, c_string_type=bytes, c_string_encoding=ascii
 cimport cython
+from random import shuffle, randint, choice
 from collections import namedtuple
 
 
@@ -100,8 +101,10 @@ cdef int card_is_king(char* card):
 
 
 @cython.boundscheck(False)
-def get_draw_moves(state):
+def get_draw_moves(state, single_random=False):
     if len(state.stock) == 0 and len(state.waste) == 0:
+        if single_random:
+            return None
         return set()
     st = copy(state)
     draw_moves = set()
@@ -115,14 +118,24 @@ def get_draw_moves(state):
         new_move = f"DR{draw_count+1}"
         top_waste = st[WASTE][-3:]
         if top_waste in seen_top_cards: # cycled through
+            if single_random:
+                if len(draw_moves) == 0:
+                    return None
+                else:
+                    return choice(list(draw_moves))
             return draw_moves
         seen_top_cards.add(top_waste)
         draw_moves.add(new_move)
+    if single_random:
+        if len(draw_moves) == 0:
+            return None
+        else:
+            return choice(list(draw_moves))
     return draw_moves
 
 
 @cython.boundscheck(False)
-cdef tableau_to_tableau(state):
+cdef tableau_to_tableau(state, single_random=False):
     # TABLEAU1 = 1 and TABLEAU7 = 7
     # range(1, 8) is all tableau indices
     FACEUP = {}
@@ -132,9 +145,17 @@ cdef tableau_to_tableau(state):
         fu = count_face_up(pile)
         FACEUP[tab] = pile[-fu:]
 
+    src_rng = range(1, 8)
+    dest_rng = range(1, 8)
+    if single_random:
+        src_rng = list(range(1, 8))
+        shuffle(src_rng)
+        dest_rng = list(range(1, 8))
+        shuffle(dest_rng)
+
     cdef Py_ssize_t idx
-    for src in range(1, 8):
-        for dest in range(1, 8):
+    for src in src_rng:
+        for dest in dest_rng:
             if src == dest:
                 continue
             num_to_move = 1
@@ -150,67 +171,111 @@ cdef tableau_to_tableau(state):
                         move = f"{src}{dest}"
                         if num_to_move > 1:
                             move += f"-{num_to_move}"
+                        if single_random:
+                            return move
                         moves.add(move)
                 elif can_stack(src_card, state_dest[-1]):
                     move = f"{src}{dest}"
                     if num_to_move > 1:
                         move += f"-{num_to_move}"
+                    if single_random:
+                        return move
                     moves.add(move)
                 num_to_move += 1
                 idx -= 1
+    if single_random:
+        return None
     return moves
 
 
 @cython.boundscheck(False)
-cdef tableau_to_foundation(state):
+cdef tableau_to_foundation(state, single_random=False):
     moves = set()
-    for src in range(1, 8):
+
+    cdef int src
+    cdef int fnd_i
+
+    src_rng = range(1, 8)
+    fnd_rng = range(0, 4)
+    if single_random:
+        src_rng = list(src_rng)
+        shuffle(src_rng)
+        fnd_rng = list(fnd_rng)
+        shuffle(src_rng)
+
+    for src in src_rng:
         if len(state[src]) == 0:
             continue  # can't move empty to foundation
         src_top = state[src][-1]
         # for fnd, fnd_suit in zip(FNDS, FND_SUITS):
-        for fnd_i in range(0, 4):
+        for fnd_i in fnd_rng:
             fnd = FNDS[fnd_i]
             fnd_suit = FND_SUITS[fnd_i]
             if len(state[fnd]) == 0:
                 if card_is_ace(src_top) and src_top[SUIT] == fnd_suit:
                     move = f"{src}{fnd_suit}"
+                    if single_random:
+                        return move
                     moves.add(move)
             else:
                 fnd_top = state[fnd][-1]
                 if src_top[SUIT] == fnd_top[SUIT]:
                     if cards_in_value_order(fnd_top, src_top):
                         move = f"{src}{fnd_suit}"
+                        if single_random:
+                            return move
                         moves.add(move)
+    if single_random:
+        return None
     return moves
 
 
 @cython.boundscheck(False)
-cdef waste_to_tableau(state):
+cdef waste_to_tableau(state, single_random=False):
     moves = set()
+
+    cdef int dest
+    dest_rng = range(1, 8)
+    if single_random:
+        dest_rng = list(dest_rng)
+        shuffle(dest_rng)
+
     if len(state.waste) > 0:
         waste_top = state.waste[-1]
-        for dest in range(1, 8):
+        for dest in dest_rng:
             if len(state[dest]) == 0:
                 # empty tableau, can move a king
                 if card_is_king(waste_top):
                     move = f"W{dest}"
+                    if single_random:
+                        return move
                     moves.add(move)
             else:
                 # non-empty tableau pile, can stack normally
                 dest_top = state[dest][-1]
                 if can_stack(waste_top, dest_top):
                     move = f"W{dest}"
+                    if single_random:
+                        return move
                     moves.add(move)
+    if single_random:
+        return None
     return moves
 
 
 @cython.boundscheck(False)
-cdef waste_to_foundation(state):
+cdef waste_to_foundation(state, single_random=False):
     moves = set()
+
+    cdef int fnd_i
+    fnd_range = range(0, 4)
+    if single_random:
+        fnd_range = list(fnd_range)
+        shuffle(fnd_range)
+
     if len(state.waste) > 0:
         waste_top = state.waste[-1]
-        for fnd_i in range(0, 4):
+        for fnd_i in fnd_range:
             fnd = FNDS[fnd_i]
             fnd_suit = FND_SUITS[fnd_i]
             if waste_top[SUIT] != fnd_suit:
@@ -218,31 +283,74 @@ cdef waste_to_foundation(state):
             if len(state[fnd]) == 0:
                 if card_is_ace(waste_top):
                     move = f"W{fnd_suit}"
+                    if single_random:
+                        return move
                     moves.add(move)
             else:
                 fnd_top = state[fnd][-1]
                 if cards_in_value_order(fnd_top, waste_top):
                     move = f"W{fnd_suit}"
+                    if single_random:
+                        return move
                     moves.add(move)
+    if single_random:
+        return None
     return moves
 
+
 @cython.boundscheck(False)
-cdef foundation_to_tableau(state):
+cdef foundation_to_tableau(state, single_random=False):
     moves = set()
-    for fnd_i in range(0, 4):
+
+    cdef int fnd_i
+    cdef int tab
+    fnd_range = range(0, 4)
+    tab_range = range(1, 8)
+    if single_random:
+        fnd_range = list(fnd_range)
+        shuffle(fnd_range)
+        tab_range = list(tab_range)
+        shuffle(tab_range)
+
+    for fnd_i in fnd_range:
         fnd = FNDS[fnd_i]
         fnd_suit = FND_SUITS[fnd_i]
         if len(state[fnd]) == 0:
             continue  # can't move any cards from an empty foundation
         fnd_top = state[fnd][-1]
-        for tab in range(1, 8):
+        for tab in tab_range:
             if len(state[tab]) == 0:
                 continue  # not gonna move a king onto empty tableau
             tab_top = state[tab][-1]
             if can_stack(fnd_top, tab_top):
                 move = f"{fnd_suit}{tab}"
+                if single_random:
+                    return move
                 moves.add(move)
+    if single_random:
+        return None
     return moves
+
+
+def random_move(state):
+    rand_list = list(range(0, 5))
+    shuffle(rand_list)
+    for i in rand_list:
+        if i == 0:
+            move = tableau_to_tableau(state, single_random=True)
+        elif i == 1:
+            move = tableau_to_foundation(state, single_random=True)
+        elif i == 2:
+            move = waste_to_tableau(state, single_random=True)
+        elif i == 3:
+            move = waste_to_foundation(state, single_random=True)
+        elif i == 4:
+            move = foundation_to_tableau(state, single_random=True)
+        elif i == 5:
+            move = get_draw_moves(state, single_random=True)
+        if move:
+            return move
+    return None
 
 
 @cython.boundscheck(False)

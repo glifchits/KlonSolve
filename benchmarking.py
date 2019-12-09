@@ -19,15 +19,16 @@ def filename_to_klonstate(fname):
 
 
 def random_state(solved=True):
-    if solved == True:
-        dirs = ["solved", "solvedmin"]
-    elif solved == False:
-        dirs = ["impossible"]
-    elif solved == None:
-        dirs = ["unknown"]
+    # if solved == True:
+    dirs = ["solved", "solvedmin"]
+    # elif solved == False:
+    #     dirs = ["impossible"]
+    # elif solved == None:
+    #     dirs = ["unknown"]
     fulldirs = (f"./fixtures/shootme/{d}" for d in dirs)
     fixtures = [f for d in fulldirs for f in listdir(d)]
-    fname = random.choice(fixtures)
+    # fname = random.choice(fixtures)
+    fname = fixtures[0]
     state = filename_to_klonstate(fname)
     return state
 
