@@ -4,6 +4,7 @@ import random
 import subprocess
 from pprint import pprint
 from tuplestate import init_from_solvitaire
+from gamestate import play_move
 
 
 def listdir(path):
@@ -31,6 +32,14 @@ def random_state(solved=True):
     fname = fixtures[0]
     state = filename_to_klonstate(fname)
     return state
+
+
+def random_solved_endgame(k):
+    dirs = ["solvedmin"]
+    fulldirs = (f"./fixtures/shootme/{d}" for d in dirs)
+    fixtures = [f for d in fulldirs for f in listdir(d)]
+    fname = fixtures[0]
+    return endgame(fname, k)
 
 
 def run_shootme_seed(seed, fast=False):
@@ -95,3 +104,24 @@ def parse_impossible(ret):
         "result": solution_result,
         "deck": deck,
     }
+
+
+def state_with_moveseq(fname):
+    with open(fname) as f:
+        ret = f.read()
+    solvjson = convert_shootme_to_solvitaire_json(ret)
+    state = init_from_solvitaire(solvjson)
+    moveseq = parse_winnable(ret)["moves"].strip().split(" ")
+    return state, moveseq
+
+
+def endgame(fname, k):
+    """
+    fname: path to a shootme solution fixture
+    k: number of moves *remaining* until shootme solution
+    :returns: {KlonState}
+    """
+    state, moveseq = state_with_moveseq(fname)
+    while len(moveseq) > k:
+        state = play_move(state, moveseq.pop(0))
+    return state
