@@ -1,6 +1,11 @@
 from gamestate import *
 from vectorize import *
-from tuplestate import init_from_solvitaire, init_from_ui_state, init_from_dict
+from tuplestate import (
+    init_from_solvitaire,
+    init_from_ui_state,
+    init_from_dict,
+    to_ui_state,
+)
 import numpy as np
 import unittest
 import json
@@ -600,6 +605,177 @@ class TestState(unittest.TestCase):
         }
         state = init_from_dict(d)
         self.assertFalse(state_is_win(state))
+
+    def test_state_dead_end_bjarnason2007_fig8a(self):
+        # Figure 8a from Bjarnason et al (2007)
+        d = {
+            "foundations": [(), (), (), ()],
+            # fmt: off
+            "stock": reversed("JD,3D,TD,TS,6S,8H,AS,2D,JS,9H,4C,9C,4S,7S,2C,9S,AH,TC,AD,QH,JC,7C,8D,4H".split(",")),
+            # fmt: on
+            "waste": (),
+            "tableau": [
+                ("3H",),
+                ("ks", "6D"),
+                ("7d", "3c", "5H"),
+                ("5c", "qc", "4d", "TH"),
+                ("3s", "6h", "kc", "ac", "QD"),
+                ("8c", "jh", "2h", "8s", "9d", "6C"),
+                ("kh", "5d", "7h", "kd", "5s", "2s", "QS"),
+            ],
+        }
+        state = init_from_dict(d)
+        self.assertTrue(state_is_dead_end(state))
+
+    def test_state_dead_end_faceup_stack(self):
+        # Figure 8a from Bjarnason et al (2007) with two faceup cards blocking tableau
+        stockstr = (
+            "3D,TD,TS,6S,8H,AS,2D,JS,9H,4C,9C,4S,7S,2C,9S,AH,TC,AD,QH,JC,7C,8D,4H"
+        )
+        d = {
+            "foundations": [(), (), (), ()],
+            "stock": reversed(stockstr.split(",")),
+            "waste": (),
+            "tableau": [
+                ("3H",),
+                ("ks", "6D"),
+                ("7d", "3c", "5H"),
+                ("5c", "qc", "4d", "TH"),
+                ("3s", "6h", "kc", "ac", "QD"),
+                ("8c", "jh", "2h", "8s", "9d", "6C"),
+                ("kh", "5d", "7h", "kd", "5s", "2s", "QS", "JD"),
+            ],
+        }
+        state = init_from_dict(d)
+        self.assertTrue(state_is_dead_end(state))
+
+    def test_state_dead_end_bjarnason2007_fig8b(self):
+        stockstr = (
+            "TS,5C,QC,2H,3D,6C,AC,2C,5S,4H,4S,JH,TC,6S,AD,7C,KH,6D,KD,3H,8C,9H,9C"
+        )
+        d = {
+            "foundations": [(), (), (), ()],
+            "stock": reversed(stockstr.split(",")),
+            "waste": (),
+            "tableau": [
+                ("KC",),
+                ("2d", "3C"),
+                ("8s", "2s", "5D", "4C"),
+                ("8d", "7h", "qd", "JD"),
+                ("7d", "4d", "8h", "QH", "JS"),
+                ("ks", "as", "ah", "7s", "9s", "QS"),
+                ("5h", "3s", "9d", "jc", "6h", "th", "TD"),
+            ],
+        }
+        state = init_from_dict(d)
+        state = play_move(state, "75")  # move TD from 7 onto 5 (JS,TD)
+        self.assertTrue(state_is_dead_end(state))
+
+    def test_not_dead_end_1(self):
+        d = {
+            # fmt: off
+            "foundations": [
+                ("AC","2C","3C","4C","5C","6C","7C","8C","9C","TC","JC","QC","KC"),
+                ("AD","2D","3D","4D","5D","6D","7D","8D","9D","TD","JD","QD","KD"),
+                ("AS","2S","3S","4S","5S","6S","7S","8S","9S","TS","JS","QS","KS"),
+                ("AH","2H","3H","4H","5H","6H","7H","8H","9H","TH","JH","QH","KH"),
+            ],
+            # fmt: on
+            "stock": (),
+            "tableau": [(), (), (), (), (), (), ()],
+            "waste": (),
+        }
+        state = init_from_dict(d)
+        # self.assertTrue(state_is_win(state))
+        self.assertFalse(state_is_dead_end(state))
+
+    def test_not_dead_end_2(self):
+        d = {
+            # fmt: off
+            "foundations": [
+                ("AC","2C","3C","4C","5C","6C","7C","8C","9C","TC","JC","QC","KC"),
+                ("AD","2D","3D","4D","5D","6D","7D","8D","9D","TD","JD","QD","KD"),
+                ("AS","2S","3S","4S","5S","6S","7S","8S","9S","TS","JS","QS","KS"),
+                ("AH","2H","3H","4H","5H","6H","7H","8H","9H","TH","JH","QH"),
+            ],
+            # fmt: on
+            "stock": (),
+            "tableau": [(), (), (), (), (), (), ()],
+            "waste": ("KH",),
+        }
+        state = init_from_dict(d)
+        self.assertFalse(state_is_dead_end(state))
+
+    def test_not_dead_end_3(self):
+        game = {
+            "foundation": [
+                ["AC", "2C", "3C", "4C", "5C", "6C", "7C", "8C", "9C", "10C", "JC"],
+                ["AD", "2D", "3D", "4D", "5D", "6D", "7D", "8D", "9D", "10D", "JD"],
+                ["AS", "2S", "3S", "4S", "5S", "6S", "7S", "8S", "9S", "10S", "JS"],
+                ["AH", "2H", "3H", "4H", "5H", "6H", "7H", "8H", "9H", "10H", "JH"],
+            ],
+            "waste": [],
+            "stock": [],
+            "tableau": [
+                ["KD", "QS"],
+                ["KH", "QC"],
+                [],
+                ["KC"],
+                ["QH"],
+                ["KS", "QD"],
+                [],
+            ],
+        }
+        state = init_from_ui_state(game)
+        self.assertFalse(state_is_dead_end(state))
+
+    def test_not_dead_end_4(self):
+        state = KlonState(
+            stock=(
+                # fmt: off
+                "QC", "5C", "AS", "JS", "KS", "9D", "5D", "3S", "6C", "8H", "6D", "9C",
+                "TD", "KH", "7H", "JH", "QS", "8D", "3C", "QD", "4S", "5S", "7S", "AH",
+                # fmt: on
+            ),
+            tableau1=("3H",),
+            tableau2=("9h", "JC"),
+            tableau3=("7d", "4c", "4D"),
+            tableau4=("2d", "ad", "tc", "2C"),
+            tableau5=("kc", "6h", "2h", "ts", "KD"),
+            tableau6=("ac", "5h", "3d", "9s", "7c", "2S"),
+            tableau7=("4h", "8s", "jd", "qh", "th", "8c", "6S"),
+            waste=(),
+            foundation1=(),
+            foundation2=(),
+            foundation3=(),
+            foundation4=(),
+        )
+        self.assertFalse(state_is_dead_end(state))
+
+    def test_not_dead_end_5(self):
+        state = KlonState(
+            stock=(
+                # fmt: off
+                "QC", "5C", "AS", "JS", "KS", "9D", "5D", "3S", "6C", "8H", "6D",
+                "9C", "TD", "KH", "7H", "JH", "QS", "8D", "3C", "QD", "4S",
+                # fmt: on
+            ),
+            tableau1=("3H", "2C"),
+            tableau2=("9h", "JC"),
+            tableau3=("7d", "4c", "4D"),
+            tableau4=("2d", "ad", "TC"),
+            tableau5=("kc", "6h", "2h", "ts", "KD"),
+            tableau6=("ac", "5h", "3d", "9s", "7c", "2S"),
+            tableau7=("4h", "8s", "jd", "qh", "th", "8c", "6S"),
+            waste=("AH", "7S", "5S"),
+            foundation1=(),
+            foundation2=(),
+            foundation3=(),
+            foundation4=(),
+        )
+        self.assertFalse(state_is_dead_end(state))
+
+    ###### Vectorizing
 
     def test_int_to_card_uniqueness(self):
         cards = set()

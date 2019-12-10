@@ -4,13 +4,14 @@ from decimal import Decimal
 from functools import lru_cache
 from itertools import count
 from collections import defaultdict
-from gamestatepy import (
+from gamestate import (
     KlonState,
     state_is_win,
     play_move,
     get_legal_moves,
     to_pretty_string,
     random_move,
+    count_face_up,
 )
 from policies import yan_et_al
 import logging
@@ -78,17 +79,24 @@ class MCTS:
         return len(children) == 0 and all_tried
 
     def reward(tree, node):
-        if node.is_win:
-            return WIN_REWARD
-        if node.is_cycle:
-            return CYCLE_REWARD
-        if node not in tree.children:
-            return NON_TERMINAL  # not terminal, as least as far as we know
-        all_tried = len(tree.node_untried_actions(node)) == 0
-        no_children = len(tree.children[node]) == 0
-        if all_tried and no_children:
-            return DEAD_END_REWARD
-        return NON_TERMINAL
+        fnds = [node.foundation1, node.foundation2, node.foundation3, node.foundation4]
+        lens = map(len, fnds)
+        tabs = [
+            node.tableau1,
+            node.tableau2,
+            node.tableau3,
+            node.tableau4,
+            node.tableau5,
+            node.tableau6,
+            node.tableau7,
+        ]
+        facedown_penalty = 0
+        for tab_pile in tabs:
+            faceup = count_face_up(tab_pile)
+            facedown = len(tab_pile) - faceup
+            facedown_penalty += facedown
+        # talon_penalty = len(node.stock) + len(node.waste)
+        return sum(lens) - facedown_penalty  # - talon_penalty
 
     def node_untried_actions(tree, node):
         all_actions = node.all_legal_moves
@@ -170,9 +178,6 @@ class MCTS:
         max_children = [c for c in children if abs(uct(c) - max_uct) < 0.001]
         # ret = max(children, key=uct)
         ret = random.choice(max_children)
-        print(
-            f"uct chose {ret} among {len(children)} (with {len(max_children)} tied for max UCT)"
-        )
         return ret
 
 
@@ -249,6 +254,7 @@ if __name__ == "__main__":
                 sys.exit(0)
 
             print(f"{node} is TERMINAL")
+            print(node.to_pretty_string())
             child = path.pop()  # equal to `node`
             while tree.is_terminal(child):
                 parent = path.pop()
@@ -257,6 +263,7 @@ if __name__ == "__main__":
                 child = parent
             path = []
             node = root
+            # node = child
         else:
             node = tree.search(node)
             if node in path:

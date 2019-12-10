@@ -3,6 +3,21 @@ from pprint import pprint
 from gamestate import KlonState
 
 
+STOCK = 0
+TABLEAU1 = 1
+TABLEAU2 = 2
+TABLEAU3 = 3
+TABLEAU4 = 4
+TABLEAU5 = 5
+TABLEAU6 = 6
+TABLEAU7 = 7
+WASTE = 8
+FOUNDATION_C = 9
+FOUNDATION_D = 10
+FOUNDATION_S = 11
+FOUNDATION_H = 12
+
+
 def init_from_ui_state(game_dict):
     def card(c):
         """ fixes up card definitions for UI format compat """

@@ -56,6 +56,12 @@ def irange(start, stop):
 
 cdef int can_stack(char* card, char* onto):
     """ `card` is the card to move, `onto` is the card to stack onto """
+    if same_rank(card, onto):
+        return 0
+    return cards_in_value_order(card, onto)
+
+
+cdef int same_rank(char* card, char* onto):
     cdef int cs = card[SUIT]
     cdef int os = onto[SUIT]
     cdef int C = 67
@@ -63,10 +69,10 @@ cdef int can_stack(char* card, char* onto):
     cdef int S = 83
     cdef int H = 72
     if (cs == D or cs == H) and (os == D or os == H):
-        return 0
+        return 1
     if (cs == C or cs == S) and (os == C or os == S):
-        return 0
-    return cards_in_value_order(card, onto)
+        return 1
+    return 0
 
 
 cdef int cards_in_value_order(char* card, char* onto):
@@ -535,6 +541,93 @@ def state_is_win(state):
             if card[VALUE] != expected_value:
                 return False
     return True
+
+
+cdef int same_rank_upordown(char* card, char* onto):
+    cdef int cs = card[SUIT]
+    cdef int os = onto[SUIT]
+    cdef int C = 67
+    cdef int D = 68
+    cdef int S = 83
+    cdef int H = 72
+    # if these are facedown suits, convert ords to upper case
+    if cs >= 97:
+        cs -= 32
+    if os >= 97:
+        os -= 32
+    if (cs == D or cs == H) and (os == D or os == H):
+        return 1
+    if (cs == C or cs == S) and (os == C or os == S):
+        return 1
+    return 0
+
+
+cdef int value_is_lower(char* a, char* b):
+    # is A lower than B?
+    cdef int av = a[0]
+    cdef int bv = b[0]
+
+    # convert facedown values to faceup
+    if av >= 97: # a=97 A=65; t=116 T=84; j=113 J=81; q=113 Q=81; k=107 K=75
+        av -= 32
+    if bv >= 97:
+        bv -= 32
+
+    # ace is lower than everything except ace
+    if av == 65:
+        return bv != 65
+    # king is lower than nothing
+    if bv == 75:
+        return 0 # false
+    if av <= 57: # if a is a number card... (2=50, 9=57)
+        return av < bv # this works for number cards, TQJK are also higher than 57
+    if av == 84: # T=84 lower than J, Q, K
+        return bv == 74 or bv == 81 or bv == 75
+    if av == 74: # J=74 lower than Q, K
+        return bv == 81 or bv == 75
+    if av == 81: # Q=81 lower than K=75
+        return bv == 75
+
+
+cdef lower_card_same_rank_in_pile(card, pile):
+    cdef int count = 0
+    cdef char* other
+    for other in pile:
+        if same_rank_upordown(card, other) and value_is_lower(other, card):
+            # print(f'same rank {card} {other}')
+            # print(f'value is lower {other} {card}')
+            count += 1
+        if count == 2:
+            return True
+    return False
+
+
+cdef tableau_to_foundation_dead_end(pile):
+    faceup = []
+    facedown = []
+    cdef char* card
+    for card in pile:
+        if card_is_face_down(card):
+            facedown.append(card)
+        else:
+            faceup.append(card)
+    if len(facedown) == 0:
+        return False
+    for card in faceup:
+        if lower_card_same_rank_in_pile(card, facedown):
+            return True
+    return False
+
+
+def state_is_dead_end(state):
+    # states in which two cards of same colour and rank are in the same
+    # Tableau stack blocking both of their paths to the Foundation
+    # and one of their Tableau build cards.
+    for tab in range(TABLEAU1, TABLEAU7+1):
+        pile = state[tab]
+        if tableau_to_foundation_dead_end(pile):
+            return True
+    return False
 
 
 def to_pretty_string(state):
