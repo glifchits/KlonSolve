@@ -38,7 +38,7 @@ def random_solved_endgame(k):
     dirs = ["solvedmin"]
     fulldirs = (f"./fixtures/shootme/{d}" for d in dirs)
     fixtures = [f for d in fulldirs for f in listdir(d)]
-    fname = fixtures[0]
+    fname = random.choice(fixtures)
     return endgame(fname, k)
 
 
