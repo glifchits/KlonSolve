@@ -1092,36 +1092,220 @@ class TestState(unittest.TestCase):
         )
         self.assertFalse(all_cards_faceup(state))
 
+    def test_state_is_legal_1(self):
+        self.assertTrue(state_is_legal(self.state))
+
+    def test_state_is_legal_2(self):
+        state = KlonState(
+            # fmt: off
+            stock=(
+                "TS", "AC", "8D", "7D", "6H", "KH", "8C", "7S", "KD", "AS", "7H", "4C",
+                "6C", "5H", "5C", "KS", "9H", "JH", "5D", "7C", "JD", "KC", "3S", "9S",
+            ),
+            # fmt: on
+            tableau1=("4H",),
+            tableau2=("th", "AH"),
+            tableau3=("4s", "8s", "5S"),
+            tableau4=("qd", "4d", "qh", "9D"),
+            tableau5=("ad", "jc", "td", "tc", "6D"),
+            tableau6=("qc", "8h", "js", "9c", "6s", "QS"),
+            tableau7=("2h", "3d", "2c", "2s", "2d", "3h", "3C"),
+            waste=(),
+            foundation1=(),
+            foundation2=(),
+            foundation3=(),
+            foundation4=(),
+        )
+        self.assertTrue(state_is_legal(state))
+
+    def test_state_is_legal_3(self):
+        game = {
+            "foundation": [
+                ["AC", "2C", "3C", "4C", "5C", "6C", "7C", "8C", "9C", "10C", "JC"],
+                ["AD", "2D", "3D", "4D", "5D", "6D", "7D", "8D", "9D", "10D", "JD"],
+                ["AS", "2S", "3S", "4S", "5S", "6S", "7S", "8S", "9S", "10S", "JS"],
+                ["AH", "2H", "3H", "4H", "5H", "6H", "7H", "8H", "9H", "10H", "JH"],
+            ],
+            "waste": [],
+            "stock": [],
+            "tableau": [
+                ["KD", "QS"],
+                ["KH", "QC"],
+                [],
+                ["KC"],
+                ["QH"],
+                ["KS", "QD"],
+                [],
+            ],
+        }
+        state = init_from_ui_state(game)
+        self.assertTrue(state_is_legal(state))
+
+    def test_state_is_legal_4(self):
+        d = {
+            # fmt: off
+            "foundations": [
+                ("AC","2C","3C","4C","5C","6C","7C","8C","9C","TC","JC","QC","KC"),
+                ("AD","2D","3D","4D","5D","6D","7D","8D","9D","TD","JD","QD","KD"),
+                ("AS","2S","3S","4S","5S","6S","7S","8S","9S","TS","JS","QS","KS"),
+                ("AH","2H","3H","4H","5H","6H","7H","8H","9H","TH","JH","QH","KH"),
+            ],
+            # fmt: on
+            "stock": (),
+            "tableau": [(), (), (), (), (), (), ()],
+            "waste": (),
+        }
+        state = init_from_dict(d)
+        self.assertTrue(state_is_legal(state))
+
+    def test_state_is_not_legal_1(self):
+        d = {
+            # fmt: off
+            "foundations": [
+                ("2C","AC","3C","4C","5C","6C","7C","8C","9C","TC","JC","QC","KC"), # 2C before AC
+                ("AD","2D","3D","4D","5D","6D","7D","8D","9D","TD","JD","QD","KD"),
+                ("AS","2S","3S","4S","5S","6S","7S","8S","9S","TS","JS","QS","KS"),
+                ("AH","2H","3H","4H","5H","6H","7H","8H","9H","TH","JH","QH","KH"),
+            ],
+            # fmt: on
+            "stock": (),
+            "tableau": [(), (), (), (), (), (), ()],
+            "waste": (),
+        }
+        state = init_from_dict(d)
+        self.assertFalse(state_is_legal(state))
+
+    def test_state_is_not_legal_2(self):
+        d = {
+            # fmt: off
+            "foundations": [
+                ("AC","2C","3C","4C","5C","6C","7C","8C","9C","TC","JC","QC","KC"),
+                ("AD","2D","3D","4D","5D","6D","7D","8D","9D","TD","JD","QD","KD"),
+                ("AS","3S","4S","5S","6S","7S","8S","9S","TS","JS","QS","KS"), # 3S on top of AS
+                ("AH","2H","3H","4H","5H","6H","7H","8H","9H","TH","JH","QH","KH"),
+            ],
+            # fmt: on
+            "stock": (),
+            "tableau": [(), (), (), (), (), (), ()],
+            "waste": (),
+        }
+        state = init_from_dict(d)
+        self.assertFalse(state_is_legal(state))
+
+    def test_state_is_not_legal_3(self):
+        d = {
+            # fmt: off
+            "foundations": [
+                ("AC","2C","3C","4C","5C","6C","7C","8C","9C","TC","JC","QC","KC"),
+                ("AD","2D","3D","4D","5D","6D","7D","8D","9D","TD","JD","QD","KD"),
+                ("AH","2H","3H","4H","5H","6H","7H","8H","9H","TH","JH","QH","KH"), # Hearts in Spade stack
+                ("AS",'2S',"3S","4S","5S","6S","7S","8S","9S","TS","JS","QS","KS"), # and vice versa
+            ],
+            # fmt: on
+            "stock": (),
+            "tableau": [(), (), (), (), (), (), ()],
+            "waste": (),
+        }
+        state = init_from_dict(d)
+        self.assertFalse(state_is_legal(state))
+
+    def test_state_is_not_legal_4(self):
+        state = KlonState(
+            # fmt: off
+            stock=(
+                "TS", "AC", "8D", "7D", "6H", "KH", "8C", "7S", "KD", "AS", "7H", "4C",
+                "6C", "5H", "5C", "KS", "9H", "JH", "5D", "7C", "JD", "KC", "3S", "9S",
+            ),
+            # fmt: on
+            tableau1=("4H",),
+            tableau2=("th", "AH"),
+            tableau3=("4s", "8s", "5S"),
+            tableau4=("qd", "4d", "qh", "9D"),
+            tableau5=("ad", "jc", "td", "tc", "6D", "QS"),  # not in value order
+            tableau6=("qc", "8h", "js", "9c", "6s"),
+            tableau7=("2h", "3d", "2c", "2s", "2d", "3h", "3C"),
+            waste=(),
+            foundation1=(),
+            foundation2=(),
+            foundation3=(),
+            foundation4=(),
+        )
+        self.assertFalse(state_is_legal(state))
+
+    def test_state_is_not_legal_5(self):
+        state = KlonState(
+            # fmt: off
+            stock=(
+                "TS", "AC", "8D", "7D", "6H", "KH", "8C", "7S", "KD", "AS", "7H", "4C",
+                "6C", "5H", "5C", "KS", "9H", "JH", "5D", "7C", "JD", "KC", "3S", "9S",
+            ),
+            # fmt: on
+            tableau1=("4H",),
+            tableau2=("th", "AH"),
+            tableau3=("4s", "8s", "5S"),
+            tableau4=("qd", "4d", "qh", "9D"),
+            tableau5=("ad", "jc", "td", "tc", "6D"),
+            tableau6=("qc", "8h", "js", "9c", "6s", "qs"),  # last face down
+            tableau7=("2h", "3d", "2c", "2s", "2d", "3h", "3C"),
+            waste=(),
+            foundation1=(),
+            foundation2=(),
+            foundation3=(),
+            foundation4=(),
+        )
+        self.assertFalse(state_is_legal(state))
+
+    def test_state_is_not_legal_6(self):
+        state = KlonState(
+            # fmt: off
+            stock=(
+                "TS", "AC", "8D", "7D", "6H", "KH", "8C", "7S", "KD", "AS", "7H", "4C",
+                "6C", "5H", "5C", "KS", "9H", "JH", "5D", "7C", "JD", "KC", "3S", "9S",
+            ),
+            # fmt: on
+            tableau1=("4H",),
+            tableau2=("th", "AH"),
+            tableau3=("4s", "8s", "5S"),
+            tableau4=("qd", "4d", "qh", "9D"),
+            tableau5=("ad", "jc", "td", "tc", "6D"),
+            tableau6=("qc", "8h", "js", "9c", "6S"),  # missing QS
+            tableau7=("2h", "3d", "2c", "2s", "2d", "3h", "3C"),
+            waste=(),
+            foundation1=(),
+            foundation2=(),
+            foundation3=(),
+            foundation4=(),
+        )
+        self.assertFalse(state_is_legal(state))
+
+    def test_state_is_not_legal_6(self):
+        state = KlonState(
+            # fmt: off
+            stock=(
+                "TS", "AC", "8D", "7D", "6H", "KH", "8C", "7S", "KD", "AS", "7H", "4C",
+                "6C", "5C", "KS", "9H", "JH", "5D", "7C", "JD", "KC", "3S", "9S",
+            ),
+            # fmt: on
+            tableau1=("4H",),
+            tableau2=("th", "AH"),
+            tableau3=("4s", "8s", "5S"),
+            tableau4=("qd", "4d", "qh", "9D"),
+            tableau5=("ad", "jc", "td", "tc", "6D", "5H"),  # invalid rank stack
+            tableau6=("qc", "8h", "js", "9c", "6s", "QS"),
+            tableau7=("2h", "3d", "2c", "2s", "2d", "3h", "3C"),
+            waste=(),
+            foundation1=(),
+            foundation2=(),
+            foundation3=(),
+            foundation4=(),
+        )
+        self.assertFalse(state_is_legal(state))
+
     ###### Vectorizing
-
-    def test_int_to_card_uniqueness(self):
-        cards = set()
-        vals = set()
-        for suit in "CDSH":
-            for value in "A23456789TJQK":
-                for is_facedown in [True, False]:
-                    card = value + suit
-                    if is_facedown:
-                        card = card.lower()
-                    val = card_to_int(card)
-                    cardint = int_to_card(val)
-                    cards.add(card)
-                    vals.add(val)
-        # there should be 104 possible cards
-        # 52 faceup + 52 facedown
-        self.assertEqual(len(cards), 104)
-        # there should be 104 unique card representations as well
-        self.assertEqual(len(vals), 104)
-
-    def test_int_to_card_inversion(self):
-        cards = ["ac", "AC", "2C", "9h", "TS", "jc", "QH", "kd"]
-        for card in cards:
-            transformed = int_to_card(card_to_int(card))
-            self.assertEqual(transformed, card)
 
     def test_state_to_vec_is_an_array_of_expected_size(self):
         vec = state_to_vec(self.state)
-        self.assertEqual(vec.shape, (233,))
+        self.assertEqual(vec.shape, (233, 104))
 
     def test_state_to_vec_inversion_1(self):
         transformed = vec_to_state(state_to_vec(self.state))

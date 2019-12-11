@@ -62,52 +62,59 @@ PAD[TABLEAU6] = 19
 PAD[TABLEAU7] = 19
 
 
-def card_to_int(card):
-    val, suit = card
-    s = suits[suit]
-    v = values[val.upper()]
-    cardint = (s << 4) + v
-    return cardint
+def generate_all_possible_cards():
+    cards = []
+    for faceup in [True, False]:
+        for suit in "CDSH":
+            for val in "A23456789TJQK":
+                card = f"{val}{suit}"
+                if not faceup:
+                    card = card.lower()
+                cards.append(card)
+
+    cards = np.array(cards)
+    return cards
 
 
-def int_to_card(cardint):
-    if cardint == 0:
-        return None
-    sv = cardint >> 4
-    cv = cardint & 0b1111
-    card = intvalues[cv] + intsuits[sv]
-    if sv >= 5:  # facedown
-        return card.lower()
-    return card
+all_cards = generate_all_possible_cards()
 
 
-def cardint(state_tuple, pad):
-    a = np.fromiter(map(card_to_int, state_tuple), dtype=np.uint8)
-    # do left padding
-    z = np.zeros(pad)
-    z[: a.shape[0]] = a
+def card_to_vec(card):
+    ret = (all_cards == card).astype(np.float32)
+    assert ret.max() == 1, "invalid card provided"
+    return ret
+
+
+def pile_to_vec(klonstate, pile_idx):
+    pile = klonstate[pile_idx]
+    z = np.zeros((PAD[pile_idx], len(all_cards)))
+    if len(pile) > 0:
+        a = np.stack([card_to_vec(c) for c in pile])
+        z[: a.shape[0]] = a
     return z
 
 
-def state_to_vec(state):
-    state_arr = np.array([])
-    for pile_idx in range(STOCK, FOUNDATION_H + 1):
-        a = cardint(state[pile_idx], PAD[pile_idx])
-        state_arr = np.concatenate((state_arr, a))
-    return state_arr
+def state_to_vec(klonstate):
+    piles = range(STOCK, FOUNDATION_H + 1)
+    pilevecs = [pile_to_vec(klonstate, p) for p in piles]
+    return np.concatenate(pilevecs)
 
 
-def vec_to_state(sv):
+def vec_to_state(statevec):
+    piles = range(STOCK, FOUNDATION_H + 1)
+    klonpiles = []
     start = 0
-    new_state = []
-    for pile_idx in range(STOCK, FOUNDATION_H + 1):
+    for pile_idx in piles:
         end = start + PAD[pile_idx]
-        x = sv[start:end]
-        a = list(map(int, x.tolist()))
-        y = tuple(filter(bool, map(int_to_card, a)))
-        new_state.append(y)
+        pilevec = statevec[start:end]
+        cardmsk = pilevec.max(axis=1) == 1
+        if not cardmsk.any():
+            klonpiles.append(())
+        else:
+            pile_cards = all_cards[np.argmax(pilevec[cardmsk], axis=1)]
+            klonpiles.append(tuple(pile_cards))
         start = end
-    return KlonState(*new_state)
+    return KlonState(*klonpiles)
 
 
 # first generate all possible moves
@@ -171,7 +178,8 @@ def generate_all_possible_moves():
     return all_moves
 
 
-np_all_moves = np.array(generate_all_possible_moves())
+all_moves = generate_all_possible_moves()
+np_all_moves = np.array(all_moves)
 
 
 def vector_legal_moves(state):

@@ -640,6 +640,56 @@ cpdef all_cards_faceup(state):
     return True
 
 
+cpdef state_is_legal(state):
+    cdef int fnd
+    cdef int tab
+    cdef int i
+    cdef int suit
+    cdef char* card
+    cdef char* card_a
+    cdef char* card_b
+
+    for fnd in range(FOUNDATION_C, FOUNDATION_H+1):
+        if fnd == FOUNDATION_C:
+            suit = 67
+        elif fnd == FOUNDATION_D:
+            suit = 68
+        elif fnd == FOUNDATION_S:
+            suit = 83
+        elif fnd == FOUNDATION_H:
+            suit = 72
+        pile = state[fnd]
+        for i in range(len(pile)-1):
+            card_a = pile[i]
+            if card_is_face_down(card_a):
+                return False
+            card_b = pile[i+1]
+            if card_is_face_down(card_b):
+                return False
+            if not (card_a[SUIT] == suit and card_b[SUIT] == suit):
+                return False
+            if not cards_in_value_order(card_a, card_b):
+                return False
+
+    for tab in range(TABLEAU1, TABLEAU7+1):
+        pile = state[tab]
+        for i in range(len(pile)-1):
+            onto = pile[i]
+            if card_is_face_down(onto):
+                continue
+            card = pile[i+1]
+            if not cards_in_value_order(card, onto):
+                return False
+            if same_rank(card, onto):
+                return False
+
+        if len(pile) > 0:
+            last_card = pile[len(pile) - 1]
+            if card_is_face_down(last_card):
+                return False
+    return True
+
+
 def to_pretty_string(state):
     s = ""
     s += "Stock: " + " ".join(state.stock)
