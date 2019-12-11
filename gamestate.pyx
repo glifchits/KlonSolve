@@ -630,6 +630,16 @@ def state_is_dead_end(state):
     return False
 
 
+cpdef all_cards_faceup(state):
+    cdef int tab
+    cdef char* card
+    for tab in range(TABLEAU1, TABLEAU7+1):
+        for card in state[tab]:
+            if card_is_face_down(card):
+                return False
+    return True
+
+
 def to_pretty_string(state):
     s = ""
     s += "Stock: " + " ".join(state.stock)
