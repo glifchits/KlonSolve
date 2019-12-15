@@ -182,6 +182,11 @@ all_moves = generate_all_possible_moves()
 np_all_moves = np.array(all_moves)
 
 
+def vectorize_legal_moves(legal_move_set):
+    moves = list(legal_move_set)
+    return np.isin(np_all_moves, moves).astype(np.uint8)
+
+
 def vector_legal_moves(state):
     moves = list(get_legal_moves(state))
     return np.isin(np_all_moves, moves).astype(np.uint8)

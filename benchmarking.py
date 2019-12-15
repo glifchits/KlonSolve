@@ -125,3 +125,56 @@ def endgame(fname, k):
     while len(moveseq) > k:
         state = play_move(state, moveseq.pop(0))
     return state
+
+
+all_solutions = os.listdir("./bench/shootme/")
+
+
+def solve_state(ret):
+    lines = ret.splitlines()
+    result = lines[15]
+    if result.startswith("Minimal solution"):
+        return "Solved-Min"
+    elif result.startswith("Solved"):
+        return "Solved"
+    elif result.startswith("Impossible"):
+        return "Impossible"
+    elif result.startswith("Unknown"):
+        return "Unknown"
+
+
+def clf_seeds(seedlist):
+    results = defaultdict(set)
+    for seed in seedlist:
+        with open(f"./bench/shootme/{seed}") as f:
+            ret = f.read()
+            result = solve_state(ret)
+            results[result].add(seed)
+    return results
+
+
+def clf_summary(seedlist):
+    results = clf_seeds(seedlist)
+    states = ["Solved-Min", "Solved", "Impossible", "Unknown"]
+    for clfstate in states:
+        seeds = results[clfstate]
+        print(f"{clfstate:12} {len(seeds):8,}")
+        total = sum(len(s) for s in results.values())
+    print(("-" * 12) + "-" + ("-" * 8))
+    print(f"{'Total':12} {total:8,}")
+
+
+def get_state(ret):
+    deck_json = convert_shootme_to_solvitaire_json(ret)
+    return init_from_solvitaire(deck_json)
+
+
+def map_seeds_to_states(seed_seq):
+    for seed in seed_seq:
+        with open(f"./bench/shootme/{seed}") as f:
+            ret = f.read()
+            state = get_state(ret)
+            yield seed, state
+
+
+training_games = map_seeds_to_states(all_solutions)

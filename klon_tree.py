@@ -1,7 +1,7 @@
 from gamestate import *
 
 
-class GameTree:
+class KlonTree:
     def __init__(self, root_state):
         self.state = root_state
         self.visited = set([self.state])
