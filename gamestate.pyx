@@ -42,10 +42,10 @@ DEF FND_SUITS = "CDSH"
 DEF VALUE = 0
 DEF SUIT = 1
 
-cdef FNDS = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
+cdef int[4] FNDS = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
 
 
-def irange(start, stop):
+cpdef irange(int start, int stop):
     """ inclusive range """
     if start <= stop:
         return range(start, stop + 1)
@@ -106,10 +106,10 @@ cdef int card_is_king(char* card):
 
 
 @cython.boundscheck(False)
-def get_draw_moves(state):
+cdef set get_draw_moves(state):
     if len(state.stock) == 0 and len(state.waste) == 0:
         return set()
-    st = copy(state)
+    st = state
     draw_moves = set()
     seen_top_cards = set()
     if len(st[WASTE]) > 0:
@@ -128,25 +128,27 @@ def get_draw_moves(state):
 
 
 @cython.boundscheck(False)
-cdef tableau_to_tableau(state):
+cdef set tableau_to_tableau(state):
     # TABLEAU1 = 1 and TABLEAU7 = 7
     # range(1, 8) is all tableau indices
-    FACEUP = {}
+    cdef int src, dest, tab, fu, num_to_move
+    cdef Py_ssize_t idx
+    cdef char* src_card
+    cdef tuple pile, faceup, state_dest
+    cdef int[8] FACEUP
+
     moves = set()
     for tab in range(1, 8):
-        pile = state[tab]
-        fu = count_face_up(pile)
-        FACEUP[tab] = pile[-fu:]
+        fu = count_face_up(state[tab])
+        FACEUP[tab] = fu
 
-    src_rng = range(1, 8)
-    dest_rng = range(1, 8)
-    cdef Py_ssize_t idx
-    for src in src_rng:
-        for dest in dest_rng:
+    for src in range(1, 8):
+        for dest in range(1, 8):
             if src == dest:
                 continue
             num_to_move = 1
-            faceup = FACEUP[src]
+            fu = FACEUP[src]
+            faceup = state[src][-fu:]
             idx = len(faceup) - 1
             while idx >= 0:
                 state_dest = state[dest]
@@ -170,10 +172,9 @@ cdef tableau_to_tableau(state):
 
 
 @cython.boundscheck(False)
-cdef tableau_to_foundation(state):
+cdef set tableau_to_foundation(state):
     moves = set()
-    cdef int src
-    cdef int fnd_i
+    cdef int src, fnd_i, fnd
     for src in range(1, 8):
         if len(state[src]) == 0:
             continue  # can't move empty to foundation
@@ -260,7 +261,7 @@ cdef foundation_to_tableau(state):
 
 
 @cython.boundscheck(False)
-def get_legal_moves(state):
+cpdef get_legal_moves(state):
     """ returns a set of legal moves given the state """
     moves = set()
     # tab to tab
@@ -292,10 +293,11 @@ def replace_stock(state):
 
 
 @cython.boundscheck(False)
-def count_face_up(pile):
+cpdef int count_face_up(pile):
     """ number of faceup cards in a given TABLEAU pile """
     cdef Py_ssize_t lenpile = len(pile)
     cdef int i
+    cdef char* card
     if lenpile <= 1:
         return lenpile
     for i in range(lenpile):
@@ -315,14 +317,14 @@ cdef int card_is_face_down(char* card):
 
 
 @cython.boundscheck(False)
-def last_face_up(pile):
+cpdef last_face_up(pile):
     if len(pile) == 0:
         return pile
     return pile[:-1] + (pile[-1].upper(),)
 
 
 @cython.boundscheck(False)
-def move(state, src_pile, dest_pile, cards=1):
+cpdef move(state, src_pile, dest_pile, cards=1):
     new_src = last_face_up(state[src_pile][:-cards])
     new_dest = state[dest_pile] + state[src_pile][-cards:]
     new_state = list(state)
@@ -332,7 +334,7 @@ def move(state, src_pile, dest_pile, cards=1):
 
 
 @cython.boundscheck(False)
-def draw(state):
+cpdef draw(state):
     new_waste = state[WASTE]
     new_stock = state[STOCK]
     draw_count = min(3, len(state[STOCK]))
@@ -346,7 +348,7 @@ def draw(state):
 
 
 @cython.boundscheck(False)
-def play_move(state, move_code):
+cpdef play_move(state, move_code):
     """
     Given a move code, perform that move and return the new state
     Follows ShootMe/Klondike-Solver move codex convention
@@ -357,7 +359,7 @@ def play_move(state, move_code):
     """
     cdef int draws_remaining
     if move_code.startswith("DR"):
-        st = copy(state)
+        st = state
         draws_remaining = int(move_code[2:])
         while draws_remaining >= 1:
             if len(st.stock) == 0:
@@ -415,7 +417,7 @@ cdef int pile_lookup(char* pilestr):
     if p == 87: return WASTE         # W
 
 
-def state_is_win(state):
+cpdef state_is_win(state):
     cards = "A23456789TJQK"
     if len(state.stock) != 0:
         return False
