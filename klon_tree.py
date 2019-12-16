@@ -3,9 +3,13 @@ from gamestate import *
 
 class KlonTree:
     def __init__(self, root_state):
+        self.root_state = root_state
         self.state = root_state
         self.visited = set([self.state])
         self.path = []
+
+    def print_root(self):
+        print(to_pretty_string(self.root_state))
 
     def print_state(self):
         print(to_pretty_string(self.state))

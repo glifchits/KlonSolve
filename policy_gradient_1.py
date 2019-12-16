@@ -6,6 +6,10 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 from torch.distributions import Categorical
 
+from collections import defaultdict
+import datetime
+import json
+
 from klon_tree import KlonTree
 from benchmarking import *
 from vectorize import *
@@ -20,28 +24,38 @@ MAX_STEPS = 1000
 IN = 233 * 104
 OUT = 623
 
+now = datetime.datetime.now()
+datestr = f"{now.year}{now.month}{now.day}{now.hour}{now.minute}"
+argsstr = f"gamma-{GAMMA}-lr-{LR:.2g}"
+versionstr = f"{datestr}-{argsstr}-nodropout"
+MODEL_PATH = f"./models/{versionstr}.torch"
+RESULT_PATH = f"./results/{versionstr}.json"
+
 
 class Policy(nn.Module):
     def __init__(self):
         super(Policy, self).__init__()
-        self.affine1 = nn.Linear(IN, 800)
+        self.linear1 = nn.Linear(IN, 233 * 20)
+        self.linear2 = nn.Linear(233 * 20, 233 * 8)
         self.dropout = nn.Dropout(p=0.6)
-        self.affine2 = nn.Linear(800, OUT)
+        self.linear3 = nn.Linear(233 * 8, 1500)
+        self.linear4 = nn.Linear(1500, OUT)
         self.saved_log_probs = []
         self.rewards = []
 
     def forward(self, x):
-        x = self.affine1(x)
-        x = F.relu(x)
+        x = F.relu(self.linear1(x))
+        x = F.relu(self.linear2(x))
         x = self.dropout(x)
-        action_scores = self.affine2(x)
+        x = F.relu(self.linear3(x))
+        action_scores = self.linear4(x)
         return F.softmax(action_scores, dim=1)
 
 
 policy = Policy()
 policy.to(device)
 
-optimizer = optim.SGD(policy.parameters(), lr=1e-2)
+optimizer = optim.SGD(policy.parameters(), lr=LR)
 eps = np.finfo(np.float32).eps.item()
 
 
@@ -111,11 +125,36 @@ def play_game(klonstate):
         if reward != 0:
             break
 
-    print("done, final reward", reward, "steps", step, "path", len(tree.path))
     finish_episode()
+    return (reward, step, tree)
 
 
-for i, env in enumerate(training_games):
-    seed, klonstate = env
-    print(f"game {i:4}, playing seed {seed}")
-    play_game(klonstate)
+rewards = []
+wins = {}
+
+
+def write_results():
+    with open(RESULT_PATH, "w") as f:
+        json.dump({"net": str(policy), "rewards": rewards, "wins": wins}, f)
+
+
+try:
+    for i, env in enumerate(training_games):
+        seed, klonstate = env
+        ret = play_game(klonstate)
+        reward, steps, tree = ret
+        rewards.append(reward)
+        if i % 10 == 0 and i > 0:
+            last_10 = np.average(rewards[-10:])
+            last_100 = np.average(rewards[-100:])
+            print(f"rewards {i:4} ::: avg10: {last_10:.2f}, avg100: {last_100:.2f}")
+        if reward > 0:
+            print(f"got a win!! {seed}")
+            wins[seed] = tree.path
+        if i % 200 == 1 and i > 10:
+            print(f"saving... {MODEL_PATH}")
+            torch.save(policy.state_dict(), MODEL_PATH)
+            print("saved model")
+            write_results()
+finally:
+    write_results()
