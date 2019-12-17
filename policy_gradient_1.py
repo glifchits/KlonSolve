@@ -18,7 +18,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print("device", device)
 
 GAMMA = 0.5
-LR = 1e-2
+LR = 1e-3
 MAX_STEPS = 1000
 
 IN = 233 * 104
@@ -36,9 +36,9 @@ class Policy(nn.Module):
     def __init__(self):
         super(Policy, self).__init__()
         self.linear1 = nn.Linear(IN, 233 * 20)
-        self.linear2 = nn.Linear(233 * 20, 233 * 8)
+        self.linear2 = nn.Linear(233 * 20, 233 * 10)
         self.dropout = nn.Dropout(p=0.6)
-        self.linear3 = nn.Linear(233 * 8, 1500)
+        self.linear3 = nn.Linear(233 * 10, 1500)
         self.linear4 = nn.Linear(1500, OUT)
         self.saved_log_probs = []
         self.rewards = []
