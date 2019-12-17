@@ -129,9 +129,6 @@ def endgame(fname, k):
     return state
 
 
-all_solutions = os.listdir("./bench/shootme/")
-
-
 def solve_state(ret):
     lines = ret.splitlines()
     result = lines[15]
@@ -179,4 +176,10 @@ def map_seeds_to_states(seed_seq):
             yield seed, state
 
 
-training_games = map_seeds_to_states(all_solutions)
+def get_all_solutions():
+    return os.listdir("./bench/shootme/")
+
+def get_training_games():
+    all_solutions = get_all_solutions()
+    training_games = map_seeds_to_states(all_solutions)
+    return training_games

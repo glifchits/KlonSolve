@@ -139,6 +139,7 @@ def write_results():
 
 
 try:
+    training_games = get_training_games()
     for i, env in enumerate(training_games):
         seed, klonstate = env
         ret = play_game(klonstate)

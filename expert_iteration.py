@@ -261,4 +261,4 @@ def train_apprentice(training_games, batch_size=5, states=1):
             json.dump(results, f)
 
 
-train_apprentice(training_games, batch_size=10)
+train_apprentice(get_training_games(), batch_size=10)
