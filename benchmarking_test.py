@@ -2,11 +2,13 @@ import os
 import pytest
 import unittest
 from tuplestate import *
-from benchmarking import *
 
 
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTION") != None, reason="In CI environment")
 class TestInterop(unittest.TestCase):
+    def setUp(self):
+        from benchmarking import *
+
     def test_shootme_seed12(self):
         sm_out = run_shootme_seed(12, fast=True)
         """$ ./KlondikeSolver /G 12 /R /DC 3 /MOVES
