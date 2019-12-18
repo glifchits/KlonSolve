@@ -2,6 +2,7 @@ import re
 import os
 import random
 import subprocess
+from collections import defaultdict
 from pprint import pprint
 from tuplestate import init_from_solvitaire
 from gamestate import play_move
@@ -28,8 +29,8 @@ def random_state(solved=True):
     #     dirs = ["unknown"]
     fulldirs = (f"./fixtures/shootme/{d}" for d in dirs)
     fixtures = [f for d in fulldirs for f in listdir(d)]
-    # fname = random.choice(fixtures)
-    fname = fixtures[0]
+    fname = random.choice(fixtures)
+    # fname = fixtures[0]
     state = filename_to_klonstate(fname)
     return state
 
@@ -69,7 +70,7 @@ def convert_shootme_to_solvitaire_json(sm_out):
 
 
 took_time = re.compile(r".* Took (\d+) ms.$")
-win_result = re.compile(r"Minimal solution in (\d+) moves. Took (\d+) ms.")
+win_result = re.compile(r"(Minimal solution|Solved) in (\d+) moves. Took (\d+) ms.")
 
 
 def parse_winnable(ret):
@@ -77,14 +78,15 @@ def parse_winnable(ret):
     solution_result = lines[15]
     moveseq = lines[-2]
     deck = "\n".join(lines[:13])
-    move_count, ms = map(int, win_result.match(solution_result).groups())
+    state, move_count, ms = win_result.match(solution_result).groups()
     return {
         "solved": True,
         "impossible": False,
         "unknown": False,
-        "move_count": move_count,
-        "time_ms": ms,
+        "move_count": int(move_count),
+        "time_ms": int(ms),
         "result": solution_result,
+        "solution_state": state,
         "moves": moveseq,
         "deck": deck,
     }
@@ -125,3 +127,59 @@ def endgame(fname, k):
     while len(moveseq) > k:
         state = play_move(state, moveseq.pop(0))
     return state
+
+
+def solve_state(ret):
+    lines = ret.splitlines()
+    result = lines[15]
+    if result.startswith("Minimal solution"):
+        return "Solved-Min"
+    elif result.startswith("Solved"):
+        return "Solved"
+    elif result.startswith("Impossible"):
+        return "Impossible"
+    elif result.startswith("Unknown"):
+        return "Unknown"
+
+
+def clf_seeds(seedlist):
+    results = defaultdict(set)
+    for seed in seedlist:
+        with open(f"./bench/shootme/{seed}") as f:
+            ret = f.read()
+            result = solve_state(ret)
+            results[result].add(seed)
+    return results
+
+
+def clf_summary(seedlist):
+    results = clf_seeds(seedlist)
+    states = ["Solved-Min", "Solved", "Impossible", "Unknown"]
+    for clfstate in states:
+        seeds = results[clfstate]
+        print(f"{clfstate:12} {len(seeds):8,}")
+        total = sum(len(s) for s in results.values())
+    print(("-" * 12) + "-" + ("-" * 8))
+    print(f"{'Total':12} {total:8,}")
+
+
+def get_state(ret):
+    deck_json = convert_shootme_to_solvitaire_json(ret)
+    return init_from_solvitaire(deck_json)
+
+
+def map_seeds_to_states(seed_seq):
+    for seed in seed_seq:
+        with open(f"./bench/shootme/{seed}") as f:
+            ret = f.read()
+            state = get_state(ret)
+            yield seed, state
+
+
+def get_all_solutions():
+    return os.listdir("./bench/shootme/")
+
+def get_training_games():
+    all_solutions = get_all_solutions()
+    training_games = map_seeds_to_states(all_solutions)
+    return training_games

@@ -1,6 +1,5 @@
 # cython: language_level=3, c_string_type=bytes, c_string_encoding=ascii
 cimport cython
-from random import shuffle, randint, choice
 from collections import namedtuple
 
 
@@ -43,10 +42,10 @@ DEF FND_SUITS = "CDSH"
 DEF VALUE = 0
 DEF SUIT = 1
 
-cdef FNDS = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
+cdef int[4] FNDS = [FOUNDATION_C, FOUNDATION_D, FOUNDATION_S, FOUNDATION_H]
 
 
-def irange(start, stop):
+cpdef irange(int start, int stop):
     """ inclusive range """
     if start <= stop:
         return range(start, stop + 1)
@@ -107,12 +106,10 @@ cdef int card_is_king(char* card):
 
 
 @cython.boundscheck(False)
-def get_draw_moves(state, single_random=False):
+cdef set get_draw_moves(state):
     if len(state.stock) == 0 and len(state.waste) == 0:
-        if single_random:
-            return None
         return set()
-    st = copy(state)
+    st = state
     draw_moves = set()
     seen_top_cards = set()
     if len(st[WASTE]) > 0:
@@ -124,48 +121,34 @@ def get_draw_moves(state, single_random=False):
         new_move = f"DR{draw_count+1}"
         top_waste = st[WASTE][-3:]
         if top_waste in seen_top_cards: # cycled through
-            if single_random:
-                if len(draw_moves) == 0:
-                    return None
-                else:
-                    return choice(list(draw_moves))
             return draw_moves
         seen_top_cards.add(top_waste)
         draw_moves.add(new_move)
-    if single_random:
-        if len(draw_moves) == 0:
-            return None
-        else:
-            return choice(list(draw_moves))
     return draw_moves
 
 
 @cython.boundscheck(False)
-cdef tableau_to_tableau(state, single_random=False):
+cdef set tableau_to_tableau(state):
     # TABLEAU1 = 1 and TABLEAU7 = 7
     # range(1, 8) is all tableau indices
-    FACEUP = {}
+    cdef int src, dest, tab, fu, num_to_move
+    cdef Py_ssize_t idx
+    cdef char* src_card
+    cdef tuple pile, faceup, state_dest
+    cdef int[8] FACEUP
+
     moves = set()
     for tab in range(1, 8):
-        pile = state[tab]
-        fu = count_face_up(pile)
-        FACEUP[tab] = pile[-fu:]
+        fu = count_face_up(state[tab])
+        FACEUP[tab] = fu
 
-    src_rng = range(1, 8)
-    dest_rng = range(1, 8)
-    if single_random:
-        src_rng = list(range(1, 8))
-        shuffle(src_rng)
-        dest_rng = list(range(1, 8))
-        shuffle(dest_rng)
-
-    cdef Py_ssize_t idx
-    for src in src_rng:
-        for dest in dest_rng:
+    for src in range(1, 8):
+        for dest in range(1, 8):
             if src == dest:
                 continue
             num_to_move = 1
-            faceup = FACEUP[src]
+            fu = FACEUP[src]
+            faceup = state[src][-fu:]
             idx = len(faceup) - 1
             while idx >= 0:
                 state_dest = state[dest]
@@ -177,111 +160,69 @@ cdef tableau_to_tableau(state, single_random=False):
                         move = f"{src}{dest}"
                         if num_to_move > 1:
                             move += f"-{num_to_move}"
-                        if single_random:
-                            return move
                         moves.add(move)
                 elif can_stack(src_card, state_dest[-1]):
                     move = f"{src}{dest}"
                     if num_to_move > 1:
                         move += f"-{num_to_move}"
-                    if single_random:
-                        return move
                     moves.add(move)
                 num_to_move += 1
                 idx -= 1
-    if single_random:
-        return None
     return moves
 
 
 @cython.boundscheck(False)
-cdef tableau_to_foundation(state, single_random=False):
+cdef set tableau_to_foundation(state):
     moves = set()
-
-    cdef int src
-    cdef int fnd_i
-
-    src_rng = range(1, 8)
-    fnd_rng = range(0, 4)
-    if single_random:
-        src_rng = list(src_rng)
-        shuffle(src_rng)
-        fnd_rng = list(fnd_rng)
-        shuffle(src_rng)
-
-    for src in src_rng:
+    cdef int src, fnd_i, fnd
+    for src in range(1, 8):
         if len(state[src]) == 0:
             continue  # can't move empty to foundation
         src_top = state[src][-1]
-        # for fnd, fnd_suit in zip(FNDS, FND_SUITS):
-        for fnd_i in fnd_rng:
+        for fnd_i in range(0, 4):
             fnd = FNDS[fnd_i]
             fnd_suit = FND_SUITS[fnd_i]
             if len(state[fnd]) == 0:
                 if card_is_ace(src_top) and src_top[SUIT] == fnd_suit:
                     move = f"{src}{fnd_suit}"
-                    if single_random:
-                        return move
                     moves.add(move)
             else:
                 fnd_top = state[fnd][-1]
                 if src_top[SUIT] == fnd_top[SUIT]:
                     if cards_in_value_order(fnd_top, src_top):
                         move = f"{src}{fnd_suit}"
-                        if single_random:
-                            return move
                         moves.add(move)
-    if single_random:
-        return None
     return moves
 
 
 @cython.boundscheck(False)
-cdef waste_to_tableau(state, single_random=False):
+cdef waste_to_tableau(state):
     moves = set()
-
     cdef int dest
-    dest_rng = range(1, 8)
-    if single_random:
-        dest_rng = list(dest_rng)
-        shuffle(dest_rng)
-
     if len(state.waste) > 0:
         waste_top = state.waste[-1]
-        for dest in dest_rng:
+        for dest in range(1, 8):
             if len(state[dest]) == 0:
                 # empty tableau, can move a king
                 if card_is_king(waste_top):
                     move = f"W{dest}"
-                    if single_random:
-                        return move
                     moves.add(move)
             else:
                 # non-empty tableau pile, can stack normally
                 dest_top = state[dest][-1]
                 if can_stack(waste_top, dest_top):
                     move = f"W{dest}"
-                    if single_random:
-                        return move
                     moves.add(move)
-    if single_random:
-        return None
     return moves
 
 
 @cython.boundscheck(False)
-cdef waste_to_foundation(state, single_random=False):
+cdef waste_to_foundation(state):
     moves = set()
-
     cdef int fnd_i
-    fnd_range = range(0, 4)
-    if single_random:
-        fnd_range = list(fnd_range)
-        shuffle(fnd_range)
-
     if len(state.waste) > 0:
         waste_top = state.waste[-1]
-        for fnd_i in fnd_range:
+        for fnd_i in range(0, 4):
             fnd = FNDS[fnd_i]
             fnd_suit = FND_SUITS[fnd_i]
             if waste_top[SUIT] != fnd_suit:
@@ -289,78 +230,38 @@ cdef waste_to_foundation(state, single_random=False):
             if len(state[fnd]) == 0:
                 if card_is_ace(waste_top):
                     move = f"W{fnd_suit}"
-                    if single_random:
-                        return move
                     moves.add(move)
             else:
                 fnd_top = state[fnd][-1]
                 if cards_in_value_order(fnd_top, waste_top):
                     move = f"W{fnd_suit}"
-                    if single_random:
-                        return move
                     moves.add(move)
-    if single_random:
-        return None
     return moves
 
 
 @cython.boundscheck(False)
-cdef foundation_to_tableau(state, single_random=False):
+cdef foundation_to_tableau(state):
     moves = set()
-
     cdef int fnd_i
     cdef int tab
-    fnd_range = range(0, 4)
-    tab_range = range(1, 8)
-    if single_random:
-        fnd_range = list(fnd_range)
-        shuffle(fnd_range)
-        tab_range = list(tab_range)
-        shuffle(tab_range)
-
-    for fnd_i in fnd_range:
+    for fnd_i in range(0, 4):
         fnd = FNDS[fnd_i]
         fnd_suit = FND_SUITS[fnd_i]
         if len(state[fnd]) == 0:
             continue  # can't move any cards from an empty foundation
         fnd_top = state[fnd][-1]
-        for tab in tab_range:
+        for tab in range(1, 8):
             if len(state[tab]) == 0:
                 continue  # not gonna move a king onto empty tableau
             tab_top = state[tab][-1]
             if can_stack(fnd_top, tab_top):
                 move = f"{fnd_suit}{tab}"
-                if single_random:
-                    return move
                 moves.add(move)
-    if single_random:
-        return None
     return moves
 
 
-def random_move(state):
-    rand_list = list(range(0, 5))
-    shuffle(rand_list)
-    for i in rand_list:
-        if i == 0:
-            move = tableau_to_tableau(state, single_random=True)
-        elif i == 1:
-            move = tableau_to_foundation(state, single_random=True)
-        elif i == 2:
-            move = waste_to_tableau(state, single_random=True)
-        elif i == 3:
-            move = waste_to_foundation(state, single_random=True)
-        elif i == 4:
-            move = foundation_to_tableau(state, single_random=True)
-        elif i == 5:
-            move = get_draw_moves(state, single_random=True)
-        if move:
-            return move
-    return None
-
-
 @cython.boundscheck(False)
-def get_legal_moves(state):
+cpdef get_legal_moves(state):
     """ returns a set of legal moves given the state """
     moves = set()
     # tab to tab
@@ -392,10 +293,11 @@ def replace_stock(state):
 
 
 @cython.boundscheck(False)
-def count_face_up(pile):
+cpdef int count_face_up(pile):
     """ number of faceup cards in a given TABLEAU pile """
     cdef Py_ssize_t lenpile = len(pile)
     cdef int i
+    cdef char* card
     if lenpile <= 1:
         return lenpile
     for i in range(lenpile):
@@ -415,14 +317,14 @@ cdef int card_is_face_down(char* card):
 
 
 @cython.boundscheck(False)
-def last_face_up(pile):
+cpdef last_face_up(pile):
     if len(pile) == 0:
         return pile
     return pile[:-1] + (pile[-1].upper(),)
 
 
 @cython.boundscheck(False)
-def move(state, src_pile, dest_pile, cards=1):
+cpdef move(state, src_pile, dest_pile, cards=1):
     new_src = last_face_up(state[src_pile][:-cards])
     new_dest = state[dest_pile] + state[src_pile][-cards:]
     new_state = list(state)
@@ -432,7 +334,7 @@ def move(state, src_pile, dest_pile, cards=1):
 
 
 @cython.boundscheck(False)
-def draw(state):
+cpdef draw(state):
     new_waste = state[WASTE]
     new_stock = state[STOCK]
     draw_count = min(3, len(state[STOCK]))
@@ -446,7 +348,7 @@ def draw(state):
 
 
 @cython.boundscheck(False)
-def play_move(state, move_code):
+cpdef play_move(state, move_code):
     """
     Given a move code, perform that move and return the new state
     Follows ShootMe/Klondike-Solver move codex convention
@@ -457,7 +359,7 @@ def play_move(state, move_code):
     """
     cdef int draws_remaining
     if move_code.startswith("DR"):
-        st = copy(state)
+        st = state
         draws_remaining = int(move_code[2:])
         while draws_remaining >= 1:
             if len(st.stock) == 0:
@@ -515,7 +417,7 @@ cdef int pile_lookup(char* pilestr):
     if p == 87: return WASTE         # W
 
 
-def state_is_win(state):
+cpdef state_is_win(state):
     cards = "A23456789TJQK"
     if len(state.stock) != 0:
         return False
