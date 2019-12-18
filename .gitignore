@@ -7,6 +7,9 @@ build
 *.c
 *.so
 
+*.pdf
+*.svg
+*.png
 
 *.html
 
