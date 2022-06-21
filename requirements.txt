@@ -3,4 +3,4 @@ timebudget==0.6
 timeout-decorator==0.4.1
 pytest==5.2.2
 flaky==3.6.1
-numpy==1.16.2
+numpy==1.22.0
